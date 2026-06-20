@@ -26,7 +26,8 @@ class LandingSiteTest(unittest.TestCase):
 
         self.assertIn('href="./styles.css"', html)
         self.assertIn("--bg:", css)
-        self.assertIn("#010208", css)
+        self.assertIn("--bg: #000000", css)
+        self.assertIn("background: #000000", css)
         self.assertIn("--green:", css)
         self.assertNotIn("https://fonts.googleapis.com", html)
 
