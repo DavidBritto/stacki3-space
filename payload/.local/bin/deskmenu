@@ -228,6 +228,7 @@ def static_search_actions():
         {'label': category_label('compositor', 'restart picom'), 'command': ['sh', '-lc', f'pkill picom || true; nohup picom --config {HOME}/.config/picom/picom.conf >/tmp/picom.log 2>&1 &']},
         {'label': category_label('theme', 'apply deep-space'), 'command': [str(HOME / '.local/bin/stack-theme'), 'apply', 'deep-space']},
         {'label': category_label('theme', 'apply space-purple'), 'command': [str(HOME / '.local/bin/stack-theme'), 'apply', 'space-purple']},
+        {'label': category_label('theme', 'apply space-lime'), 'command': [str(HOME / '.local/bin/stack-theme'), 'apply', 'space-lime']},
         {'label': category_label('wallpaper', 'next'), 'command': [str(HOME / '.local/bin/stack-wall'), 'next']},
         {'label': category_label('wallpaper', 'random'), 'command': [str(HOME / '.local/bin/stack-wall'), 'random']},
         *[

@@ -59,7 +59,7 @@ terminal → tmux → trabajo
 | Notificaciones | Dunst (oscuro, cuadrado) |
 | Navegación shell | fzf, zoxide, ripgrep, fd, eza, `try` |
 | Archivos | Yazi desde terminal/tmux |
-| Temas | `deep-space` y `space-purple` con switcher global |
+| Temas | `deep-space`, `space-purple` y `space-lime` con switcher global |
 
 Apps de apoyo incluidas en el flujo: qutebrowser, Zathura, lazygit, lazyjournal, alsamixer, nmtui, Neovim/LazyVim con tema deep-space.
 
@@ -198,12 +198,13 @@ Helpers de compatibilidad: `deskmenu`, `stack-theme`, `stack-wall`, `tui-panel`,
 
 ## Temas
 
-Dos paletas seleccionables con backup automático antes de cada apply:
+Tres paletas seleccionables con backup automático antes de cada apply:
 
 ```bash
 stack-theme list
 stack-theme apply deep-space    # negro deep-space (default)
 stack-theme apply space-purple  # variante violeta
+stack-theme apply space-lime    # full dark con acentos cian/lima
 stack-theme restore-last
 ```
 

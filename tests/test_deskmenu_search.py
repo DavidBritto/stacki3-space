@@ -39,6 +39,7 @@ class DeskmenuSearchTest(unittest.TestCase):
         actions = {a["label"]: a for a in mod.static_search_actions()}
         self.assertEqual(actions["󰏘 theme · apply deep-space"]["command"][-2:], ["apply", "deep-space"])
         self.assertTrue(actions["󰏘 theme · apply deep-space"]["command"][0].endswith("stack-theme"))
+        self.assertEqual(actions["󰏘 theme · apply space-lime"]["command"][-2:], ["apply", "space-lime"])
 
     def test_back_copy_is_minimal_and_vim_like(self):
         self.assertEqual(mod.BACK_LABEL, "← volver")
