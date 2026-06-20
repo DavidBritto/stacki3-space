@@ -16,10 +16,13 @@
 
 ## Vista previa
 
-<!-- Agrega capturas en docs/screenshots/ y enlázalas aquí antes del release público -->
-| Escritorio | Menú SPACE | Polybar |
-|------------|------------|---------|
-| _screenshot pendiente_ | _screenshot pendiente_ | _screenshot pendiente_ |
+| Escritorio | Menú SPACE |
+|:---:|:---:|
+| ![Escritorio STACKI3-Space](./docs/escritorio.png) | ![Menú SPACE](./docs/menu.png) |
+
+| Polybar | Wallpaper |
+|:---:|:---:|
+| ![Polybar](./docs/polybar.png) | ![Wallpaper deep-space](./docs/wallpaper.png) |
 
 ---
 
@@ -95,7 +98,7 @@ Apps de apoyo incluidas en el flujo: qutebrowser, Zathura, lazygit, lazyjournal,
 ### Rápida — máquina con Mint/X11
 
 ```bash
-git clone <your-repo-url> stacki3-space
+git clone https://github.com/DavidBritto/stacki3-space.git
 cd stacki3-space
 bash install.sh --deps
 ```
@@ -111,7 +114,7 @@ bash install.sh
 Cuando solo tienes `install.sh` y no el checkout completo:
 
 ```bash
-STACKI3_SPACE_REPO_URL=<your-repo-url> bash install.sh --deps
+STACKI3_SPACE_REPO_URL=https://github.com/DavidBritto/stacki3-space.git bash install.sh --deps
 ```
 
 ### Preservar tu `.zshrc`
