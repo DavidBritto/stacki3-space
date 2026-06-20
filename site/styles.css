@@ -263,7 +263,7 @@ h3 {
 .code-panel pre {
   overflow-x: auto;
   margin: 0;
-  padding: 1rem;
+  padding: 3.1rem 1rem 1rem;
   color: var(--green);
   font-size: 0.88rem;
 }
@@ -348,6 +348,24 @@ h3 {
   align-items: start;
 }
 
+.final-cta {
+  padding-bottom: clamp(2rem, 4vw, 3rem);
+  text-align: center;
+}
+
+.final-cta h2 {
+  max-width: min(900px, 22ch);
+  margin-right: auto;
+  margin-left: auto;
+  color: var(--text);
+  font-size: clamp(2rem, 5vw, 3.6rem);
+  line-height: 1.02;
+}
+
+.install-code {
+  padding-top: 0;
+}
+
 .code-panel {
   position: relative;
   overflow: hidden;
@@ -355,19 +373,37 @@ h3 {
   box-shadow: var(--shadow);
 }
 
-.copy-label {
+.copy-button {
   position: absolute;
-  top: 0.85rem;
-  right: 0.85rem;
+  top: 0.75rem;
+  right: 0.75rem;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.45rem 0.65rem;
   border: 1px solid rgba(33, 230, 255, 0.28);
-  background: rgba(33, 230, 255, 0.1);
+  background: rgba(0, 0, 0, 0.88);
   color: var(--cyan);
   border-radius: 0.08rem;
   font: inherit;
   font-size: 0.72rem;
-  font-weight: 900;
-  letter-spacing: 0.12em;
-  pointer-events: none;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: border-color 0.15s ease, color 0.15s ease, background 0.15s ease;
+}
+
+.copy-button:hover {
+  border-color: rgba(33, 230, 255, 0.55);
+  background: rgba(33, 230, 255, 0.12);
+  color: var(--text);
+}
+
+.copy-button.is-copied {
+  border-color: rgba(184, 255, 61, 0.45);
+  background: rgba(184, 255, 61, 0.1);
+  color: var(--green);
 }
 
 .steps {
@@ -396,16 +432,6 @@ h3 {
   font-weight: 900;
 }
 
-.final-cta {
-  text-align: center;
-}
-
-.final-cta h2 {
-  max-width: 900px;
-  margin-right: auto;
-  margin-left: auto;
-}
-
 .centered {
   justify-content: center;
 }
@@ -419,6 +445,23 @@ h3 {
   color: var(--muted);
 }
 
+.footer-credit {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.footer-github {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: var(--text);
+}
+
+.footer-github svg {
+  opacity: 0.85;
+}
+
 @media (max-width: 860px) {
   .site-header,
   .nav {
@@ -428,7 +471,8 @@ h3 {
   .site-header,
   .hero,
   .split,
-  .install {
+  .install,
+  .install-code {
     grid-template-columns: 1fr;
   }
 
