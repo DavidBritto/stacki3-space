@@ -204,5 +204,5 @@ function y() {
     rm -f -- "$tmp"
 }
 
-# STACKI3 truecolor theme support
+# STACKI3-Space truecolor theme support
 export COLORTERM=truecolor

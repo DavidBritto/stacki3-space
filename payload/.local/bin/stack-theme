@@ -5,19 +5,17 @@ from pathlib import Path
 
 HOME = Path.home()
 CONFIG = HOME / '.config'
-STATE = Path(os.environ.get('XDG_STATE_HOME', HOME / '.local/state')) / 'stacki3-theme'
+STATE = Path(os.environ.get('XDG_STATE_HOME', HOME / '.local/state')) / 'stacki3-space-theme'
 THEMES = CONFIG / 'stack-theme' / 'themes'
 CURRENT = CONFIG / 'stack-theme' / 'current.json'
 BACKUP_MARKER = STATE / 'last-backup'
 
 def repo_payload():
-    override = os.environ.get('STACKI3_REPO_PAYLOAD')
+    override = os.environ.get('STACKI3_SPACE_REPO_PAYLOAD')
     candidates = [
         Path(override) if override else None,
-        HOME / 'git/space-stack/payload',
-        HOME / 'git/stacki3/payload',
-        HOME / 'space-stack/payload',
-        HOME / 'stacki3/payload',
+        HOME / 'git/stacki3-space/payload',
+        HOME / 'stacki3-space/payload',
     ]
     for candidate in candidates:
         if candidate and candidate.exists():
@@ -192,7 +190,7 @@ def apply_zsh_omp(theme):
         target = str(CONFIG/'oh-my-posh/themes/catppuccin_json_balanced.editable.omp.json')
     txt=z.read_text()
     if 'export COLORTERM=' not in txt:
-        txt += '\n# STACKI3 truecolor theme support\nexport COLORTERM=truecolor\n'
+        txt += '\n# STACKI3-Space truecolor theme support\nexport COLORTERM=truecolor\n'
     txt=re.sub(r'eval "\$\(oh-my-posh init zsh --config [^)]+\)"', f'eval "$(oh-my-posh init zsh --config {target})"', txt)
     z.write_text(txt)
 

@@ -23,7 +23,7 @@ case "$panel" in
     ;;
   lazyjournal|logs)
     title="TUI: logs · lazyjournal"
-    cmd="if command -v lazyjournal >/dev/null 2>&1; then exec lazyjournal; else printf 'lazyjournal no esta instalado en PATH\\n'; printf 'Ejecuta scripts/install-lazyjournal.sh desde el repo STACKI3.\\n'; printf 'Presiona una tecla para abrir una shell...'; IFS= read -rsn1 _; export STACK_NO_AUTO_TMUX=1; exec \${SHELL:-bash} -l; fi"
+    cmd="if command -v lazyjournal >/dev/null 2>&1; then exec lazyjournal; else printf 'lazyjournal no esta instalado en PATH\\n'; printf 'Ejecuta scripts/install-lazyjournal.sh desde el repo STACKI3-Space.\\n'; printf 'Presiona una tecla para abrir una shell...'; IFS= read -rsn1 _; export STACK_NO_AUTO_TMUX=1; exec \${SHELL:-bash} -l; fi"
     ;;
   audio-mixer)
     title="TUI: audio"
@@ -38,10 +38,17 @@ case "$panel" in
     ;;
   network-tui)
     title="TUI: network"
-    panel_width=520
-    panel_height=330
+    panel_width=760
+    panel_height=520
     window_class="stack-network-panel"
     cmd="export STACK_NO_AUTO_TMUX=1 TERM=xterm-256color; export NEWT_COLORS='root=white,black;border=blue,black;window=white,black;shadow=black,black;title=magenta,black;button=black,blue;actbutton=black,magenta;entry=white,black;label=white,black;compactbutton=white,black;checkbox=blue,black;actcheckbox=black,blue'; exec nmtui"
+    ;;
+  network-connect)
+    title="TUI: connect network"
+    panel_width=760
+    panel_height=520
+    window_class="stack-network-panel"
+    cmd="export STACK_NO_AUTO_TMUX=1 TERM=xterm-256color; export NEWT_COLORS='root=white,black;border=blue,black;window=white,black;shadow=black,black;title=magenta,black;button=black,blue;actbutton=black,magenta;entry=white,black;label=white,black;compactbutton=white,black;checkbox=blue,black;actcheckbox=black,blue'; if command -v nmtui-connect >/dev/null 2>&1; then exec nmtui-connect; else exec nmtui connect; fi"
     ;;
   clipboard-view)
     title="TUI: clipboard"
@@ -93,7 +100,7 @@ else
     --override color14=#67c9e4 \
     --override color15=#ffffff \
     --working-directory "$HOME" \
-    bash --noprofile --norc -c "export STACK_NO_AUTO_TMUX=1; $cmd; rc=\$?; if [ \$rc -ne 0 ]; then printf '\n[panel error] exit=%s\n' \"\$rc\"; printf 'Presiona una tecla para cerrar...'; IFS= read -rsn1 _; fi; exit \$rc">/tmp/stacki3-tui-panel.log 2>&1 &
+    bash --noprofile --norc -c "export STACK_NO_AUTO_TMUX=1; $cmd; rc=\$?; if [ \$rc -ne 0 ]; then printf '\n[panel error] exit=%s\n' \"\$rc\"; printf 'Presiona una tecla para cerrar...'; IFS= read -rsn1 _; fi; exit \$rc">/tmp/stacki3-space-tui-panel.log 2>&1 &
   sleep 0.4
   i3-msg "[title=\"$title\"] floating enable, resize set $panel_width $panel_height, move scratchpad, scratchpad show, move position center, focus" >/dev/null 2>&1 || true
   exit 0

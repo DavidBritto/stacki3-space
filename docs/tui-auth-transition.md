@@ -1,6 +1,6 @@
 # TUI auth transition
 
-STACKI3 should keep moving toward an Omarchy-like workflow where frequent privileged actions use an explicit terminal path instead of surprise desktop dialogs.
+STACKI3-Space should keep moving toward an Omarchy-like workflow where frequent privileged actions use an explicit terminal path instead of surprise desktop dialogs.
 
 ## Current rule
 
@@ -14,7 +14,7 @@ The user chooses an action from `space`, sees the exact privileged command or TU
 
 ## Migration order
 
-1. Keep `polkit-gnome-authentication-agent-1`, but style it as a STACKI3/Dunst-like fallback.
+1. Keep `polkit-gnome-authentication-agent-1`, but style it as a STACKI3-Space/Dunst-like fallback.
 2. Route stack-owned privileged actions through dedicated helpers:
    - power actions
    - updates

@@ -31,6 +31,12 @@ class SpaceCliTest(unittest.TestCase):
         self.assertEqual(mod.build_command(["wall", "next"]), [str(Path.home() / ".local/bin/stack-wall"), "next"])
         self.assertEqual(mod.build_command(["wall", "apply", "/tmp/wall.png"]), [str(Path.home() / ".local/bin/stack-wall"), "apply", "/tmp/wall.png"])
 
+    def test_screenshot_commands_delegate_to_stack_screenshot(self):
+        mod = load_space()
+        helper = str(Path.home() / ".local/bin/stack-screenshot")
+        self.assertEqual(mod.build_command(["screenshot"]), [helper, "gui"])
+        self.assertEqual(mod.build_command(["screenshot", "delayed", "4"]), [helper, "delayed", "4"])
+
     def test_search_and_menu_delegate_to_deskmenu(self):
         mod = load_space()
         deskmenu = str(Path.home() / ".local/bin/deskmenu")

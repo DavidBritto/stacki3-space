@@ -8,13 +8,13 @@ scripts/package.sh
 
 2. Enviar solo el tarball al equipo de prueba:
 ```bash
-scp dist/stacki3-package.tar.gz user@target:~/
+scp dist/stacki3-space-package.tar.gz user@target:~/
 ```
 
 3. Instalar en el equipo destino:
 ```bash
-tar -xzf ~/stacki3-package.tar.gz
-cd ~/stacki3-package
+tar -xzf ~/stacki3-space-package.tar.gz
+cd ~/stacki3-space-package
 bash install.sh --deps
 ```
 
@@ -27,5 +27,5 @@ Notas
 -----
 - El paquete incluye solo `install.sh`, `README.md`, `stack.md`, `docs/`, `scripts/` y `payload/`.
 - No incluye `.git`, `.atl`, `.engram`, tests, logs ni archivos de trabajo locales.
-- `install.sh` reemplaza `__STACKI3_HOME__` por el `$HOME` real del equipo destino.
-- Regenerar siempre `dist/stacki3-package.tar.gz` antes de moverlo a otro equipo.
+- `install.sh` reemplaza `__STACKI3_SPACE_HOME__` por el `$HOME` real del equipo destino.
+- Regenerar siempre `dist/stacki3-space-package.tar.gz` antes de moverlo a otro equipo.

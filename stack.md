@@ -1,4 +1,4 @@
-# STACKI3 — Agent Stack File
+# STACKI3-Space — Agent Stack File
 
 ## Mission
 This repo packages a **real keyboard-first i3 desktop on Linux Mint/X11**. Treat this file as the **current operating model**, not as a wishlist.
@@ -104,7 +104,7 @@ Commands:
 The switcher writes generated color files and updates i3, Polybar, Rofi, Dunst, Picom, tmux, Kitty, Zsh/Oh My Posh, GTK/Nemo and terminal/editor theme files shipped by the stack. Nemo stays on `CrewDragon-Y` in both themes by preference. The selectable theme names are `deep-space` and `space-purple`; `oceano` survives only in legacy component path names such as `rofi/oceano.rasi` and `polkit-oceano`.
 
 ### SPACE command surface
-`~/.local/bin/space` is the main Omarchy-like command surface for STACKI3. It wraps the existing helpers instead of replacing stable pieces.
+`~/.local/bin/space` is the main Omarchy-like command surface for STACKI3-Space. It wraps the existing helpers instead of replacing stable pieces.
 
 Commands:
 - `space search` → global command/project/window/workspace search through Rofi
@@ -117,7 +117,7 @@ Commands:
 - `space doctor` → check core desktop commands
 
 ### Shell tools
-STACKI3 mirrors the useful shell layer from Omarchy without changing the base distro:
+STACKI3-Space mirrors the useful shell layer from Omarchy without changing the base distro:
 
 - `fzf` powers fuzzy selection; `ff` opens a file picker with preview.
 - `zoxide` initializes in Zsh and replaces slow manual `cd` habits.

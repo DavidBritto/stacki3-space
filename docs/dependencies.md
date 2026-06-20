@@ -68,7 +68,7 @@ sudo apt install \
 - `fzf` — shell/menu completion helpers
 - `zoxide` — smarter `cd` replacement
 - `ripgrep` — fast project text search via `rg`
-- `fd-find` — Ubuntu package for `fd`; stacki3 ships an `fd` wrapper around `fdfind`
+- `fd-find` — Ubuntu package for `fd`; stacki3-space ships an `fd` wrapper around `fdfind`
 - `eza` — modern `ls` replacement with icons/tree aliases
 - `git` — repos and install flow
 - `rsync` — payload sync in `install.sh`

@@ -46,7 +46,7 @@
   },
   "font": "Berkeley Mono",
   "zsh": {
-    "omp_config": "__STACKI3_HOME__/.config/oh-my-posh/themes/catppuccin_json_balanced.editable.omp.json"
+    "omp_config": "__STACKI3_SPACE_HOME__/.config/oh-my-posh/themes/catppuccin_json_balanced.editable.omp.json"
   },
   "opencode": {
     "theme": "space-purple"

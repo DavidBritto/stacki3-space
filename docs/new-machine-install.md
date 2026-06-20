@@ -11,33 +11,28 @@ sudo apt update && sudo apt upgrade
 sudo apt install -y git curl rsync
 ```
 
-## 2. Get STACKI3
+## 2. Get STACKI3-Space
 
-Use the published bootstrap when the repo is public. This installs the APT dependency set and then deploys the STACKI3 config payload:
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/Gentleman-Programming/stacki3/main/install.sh | bash -s -- --deps
-```
-
-Use a fork or private repo by overriding the clone URL:
+Clone this repo from your own git remote and install dependencies plus the config payload:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/Gentleman-Programming/stacki3/main/install.sh \
-  | STACKI3_REPO_URL=https://github.com/me/stacki3.git bash -s -- --deps
+git clone https://github.com/DavidBritto/stacki3-space.git stacki3-space
+cd stacki3-space
+bash install.sh --deps
 ```
 
 For an offline, unpublished, or SSH-only transfer, create the package on the source machine:
 
 ```bash
 scripts/package.sh
-scp dist/stacki3-package.tar.gz user@target:~/
+scp dist/stacki3-space-package.tar.gz user@target:~/
 ```
 
 Then on the target machine:
 
 ```bash
-tar -xzf ~/stacki3-package.tar.gz
-cd ~/stacki3-package
+tar -xzf ~/stacki3-space-package.tar.gz
+cd ~/stacki3-space-package
 bash install.sh --deps
 ```
 
@@ -71,10 +66,10 @@ bash install.sh
 
 This mode deploys config only. It does not install desktop packages.
 
-The installer keeps an existing `~/.zshrc` by default. On a clean machine where you want the packaged STACKI3 shell profile, use:
+The installer keeps an existing `~/.zshrc` by default. On a clean machine where you want the packaged STACKI3-Space shell profile, use:
 
 ```bash
-STACKI3_OVERWRITE_ZSHRC=1 bash install.sh
+STACKI3_SPACE_OVERWRITE_ZSHRC=1 bash install.sh
 ```
 
 Log out and select the i3 session from LightDM. Then run:
@@ -87,7 +82,7 @@ scripts/verify-install.sh
 
 ## 5. Restore Daily Data
 
-Restore personal data after STACKI3 is working:
+Restore personal data after STACKI3-Space is working:
 
 ```bash
 rsync -a --info=progress2 old:~/obsidian-vault/ ~/obsidian-vault/

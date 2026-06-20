@@ -6,22 +6,22 @@ Use this manifest when moving the daily workstation to a new Linux Mint/X11 mach
 
 | Area | Source | Restore path |
 |------|--------|--------------|
-| STACKI3 desktop config | `payload/` | `$HOME/` via `install.sh` |
+| STACKI3-Space desktop config | `payload/` | `$HOME/` via `install.sh` |
 | i3, Polybar, Rofi, Dunst, Picom | `payload/.config/` | `$HOME/.config/` |
 | Shell/tmux defaults | `payload/.zshrc`, `payload/.tmux.conf` | `$HOME/` |
 | Daily helper commands | `payload/.local/bin/` | `$HOME/.local/bin/` |
 | Theme definitions | `payload/.config/stack-theme/` | `$HOME/.config/stack-theme/` |
 
-## Restore After STACKI3
+## Restore After STACKI3-Space
 
-Copy these after running the STACKI3 installer and dependency script:
+Copy these after running the STACKI3-Space installer and dependency script:
 
 | Data | Recommended restore |
 |------|---------------------|
 | Obsidian vault | `rsync -a --info=progress2 old:~/obsidian-vault/ ~/obsidian-vault/` |
 | Git projects | `rsync -a --info=progress2 old:~/git/ ~/git/` |
 | Documents | `rsync -a --info=progress2 old:~/Documentos/ ~/Documentos/` |
-| Scripts not in STACKI3 | Review before copying into `~/.local/bin` |
+| Scripts not in STACKI3-Space | Review before copying into `~/.local/bin` |
 | Browser bookmarks | Prefer account sync or explicit export/import |
 
 Do not restore an entire old `$HOME` over the new one. It will overwrite freshly deployed configs and can bring stale cache, sockets, machine IDs, and secrets.
@@ -52,7 +52,7 @@ These are useful but not required for a clean transition:
 
 ## Preflight Checklist
 
-- [ ] `space-stack` is published or packaged.
+- [ ] `stacki3-space` is published or packaged.
 - [ ] `scripts/install-dependencies.sh` was reviewed.
 - [ ] `scripts/install-lazyjournal.sh` was run if log browsing is part of the daily setup.
 - [ ] `scripts/package.sh` was run if using an offline transfer.

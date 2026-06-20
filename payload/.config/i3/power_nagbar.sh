@@ -2,7 +2,7 @@
 set -euo pipefail
 
 FONT='pango:Berkeley Mono 11'
-MSG='STACKI3 · confirmar apagado'
+MSG='STACKI3-Space · confirmar apagado'
 ACTION="cinnamon-session-quit --power-off --no-prompt || systemctl poweroff || poweroff || shutdown -h now"
 
 exec i3-nagbar \

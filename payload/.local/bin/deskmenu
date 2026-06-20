@@ -220,7 +220,8 @@ def static_search_actions():
     return [
         {'label': category_label('system', 'reload i3'), 'command': ['i3-msg', 'reload']},
         {'label': category_label('system', 'lock screen'), 'command': [str(HOME / '.config/i3/lock.sh')]},
-        {'label': category_label('system', 'screenshot'), 'command': ['flameshot', 'gui']},
+        {'label': category_label('system', 'screenshot'), 'command': [str(HOME / '.local/bin/stack-screenshot'), 'gui']},
+        {'label': category_label('system', 'screenshot delayed'), 'command': [str(HOME / '.local/bin/stack-screenshot'), 'delayed', '4']},
         {'label': category_label('system', 'power menu'), 'command': [str(HOME / '.config/i3/power_menu.sh')]},
         {'label': category_label('bar', 'restart polybar'), 'command': [str(HOME / '.config/polybar/launch.sh')]},
         {'label': category_label('notify', 'restart dunst'), 'command': ['sh', '-lc', 'pkill dunst || true; nohup dunst >/tmp/dunst.log 2>&1 &']},
@@ -352,7 +353,8 @@ def panel_menu_entries():
         (action_label('system', 'Logs · Lazyjournal'), 'lazyjournal'),
         (action_label('project', 'Git · Lazygit'), 'lazygit'),
         (action_label('audio', 'Audio · Mixer'), 'audio-mixer'),
-        (action_label('network', 'Network · Nmtui'), 'network-tui'),
+        (action_label('network', 'Network · Connect'), 'network-connect'),
+        (action_label('network', 'Network · Advanced'), 'network-tui'),
         (action_label('clipboard', 'Clipboard · History'), 'clipboard-view'),
         (action_label('notes', 'Notes · Quick notes'), 'quick-notes'),
     ]
@@ -476,7 +478,8 @@ def menu_network():
     state = 'enabled' if wifi_enabled() else 'disabled'
     choice = rofi_select('Network', [
         f'wifi: {state}',
-        'open nmtui',
+        'connect to another network',
+        'advanced nmtui',
         'show active connections',
         'rescan wifi',
     ], allow_back=True)
@@ -488,7 +491,9 @@ def menu_network():
         new = 'off' if wifi_enabled() else 'on'
         run(['nmcli', 'radio', 'wifi', new])
         notify(f'Wi-Fi {"activado" if new == "on" else "desactivado"}', title='network', app='system')
-    elif choice == 'open nmtui':
+    elif choice == 'connect to another network':
+        run([str(HOME / '.local/bin/tui-panel'), 'network-connect'])
+    elif choice == 'advanced nmtui':
         run([str(HOME / '.local/bin/tui-panel'), 'network-tui'])
     elif choice == 'show active connections':
         active = check_output(['nmcli', '-t', '-f', 'NAME,TYPE,DEVICE', 'connection', 'show', '--active']).strip()
@@ -562,6 +567,7 @@ def menu_system():
         category_label('compositor', 'restart picom'): 'restart picom',
         category_label('system', 'lock screen'): 'lock screen',
         category_label('system', 'screenshot'): 'screenshot',
+        category_label('system', 'screenshot delayed'): 'screenshot delayed',
         category_label('system', 'power menu'): 'power menu',
         category_label('system', 'update apps'): 'update apps',
     }
@@ -584,7 +590,9 @@ def menu_system():
     elif choice == 'lock screen':
         subprocess.Popen([str(HOME / '.config/i3/lock.sh')])
     elif choice == 'screenshot':
-        subprocess.Popen(['flameshot', 'gui'])
+        subprocess.Popen([str(HOME / '.local/bin/stack-screenshot'), 'gui'])
+    elif choice == 'screenshot delayed':
+        subprocess.Popen([str(HOME / '.local/bin/stack-screenshot'), 'delayed', '4'])
     elif choice == 'power menu':
         subprocess.Popen([str(HOME / '.config/i3/power_menu.sh')])
     elif choice == 'update apps':

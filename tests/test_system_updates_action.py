@@ -19,8 +19,8 @@ class SystemUpdatesActionTest(unittest.TestCase):
         self.assertIn("[module/date]", text)
         self.assertIn("date_updates_status.sh", text)
         script = DATE_UPDATES.read_text()
-        self.assertIn('updates_cmd="__STACKI3_HOME__/.local/bin/space menu system"', script)
-        self.assertNotIn("click-left = __STACKI3_HOME__/.local/bin/space-system-update", text)
+        self.assertIn('updates_cmd="__STACKI3_SPACE_HOME__/.local/bin/space menu system"', script)
+        self.assertNotIn("click-left = __STACKI3_SPACE_HOME__/.local/bin/space-system-update", text)
 
     def test_system_menu_exposes_update_apps_not_reminder(self):
         text = DESKMENU.read_text()

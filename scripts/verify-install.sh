@@ -23,13 +23,13 @@ check_path() {
   fi
 }
 
-echo '[stacki3-verify] commands'
+echo '[stacki3-space-verify] commands'
 for cmd in i3 polybar rofi dunst picom kitty tmux zsh fzf zoxide rg fdfind eza rsync xsel xdotool python3 lazyjournal; do
   check_cmd "$cmd"
 done
 
 echo
-echo '[stacki3-verify] deployed files'
+echo '[stacki3-space-verify] deployed files'
 for path in \
   .config/i3/config \
   .config/polybar/config.ini \
@@ -58,8 +58,8 @@ fi
 
 echo
 if [ "$failures" -eq 0 ]; then
-  echo '[stacki3-verify] ready'
+  echo '[stacki3-space-verify] ready'
 else
-  printf '[stacki3-verify] %s check(s) need attention\n' "$failures"
+  printf '[stacki3-space-verify] %s check(s) need attention\n' "$failures"
   exit 1
 fi

@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-calendar_cmd="__STACKI3_HOME__/.config/polybar/scripts/calendar_tui.sh"
-updates_cmd="__STACKI3_HOME__/.local/bin/space menu system"
-cache="${XDG_CACHE_HOME:-$HOME/.cache}/stacki3/updates-count"
+calendar_cmd="__STACKI3_SPACE_HOME__/.config/polybar/scripts/calendar_tui.sh"
+updates_cmd="__STACKI3_SPACE_HOME__/.local/bin/space menu system"
+cache="${XDG_CACHE_HOME:-$HOME/.cache}/stacki3-space/updates-count"
 mkdir -p "$(dirname "$cache")"
 
 update_count() {

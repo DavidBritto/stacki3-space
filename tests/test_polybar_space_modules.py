@@ -21,15 +21,15 @@ class PolybarSpaceModulesTest(unittest.TestCase):
         self.assertNotIn("network_status.sh", self.text)
 
     def test_bar_clicks_use_space_cli(self):
-        self.assertIn("click-left = __STACKI3_HOME__/.local/bin/space menu panels", self.text)
+        self.assertIn("click-left = __STACKI3_SPACE_HOME__/.local/bin/space menu panels", self.text)
         script = DATE_UPDATES.read_text()
-        self.assertIn('calendar_cmd="__STACKI3_HOME__/.config/polybar/scripts/calendar_tui.sh"', script)
-        self.assertNotIn("click-left = __STACKI3_HOME__/.local/bin/space menu network", self.text)
+        self.assertIn('calendar_cmd="__STACKI3_SPACE_HOME__/.config/polybar/scripts/calendar_tui.sh"', script)
+        self.assertNotIn("click-left = __STACKI3_SPACE_HOME__/.local/bin/space menu network", self.text)
 
     def test_updates_indicator_is_embedded_in_date_module(self):
-        self.assertIn("exec = __STACKI3_HOME__/.config/polybar/scripts/date_updates_status.sh", self.text)
+        self.assertIn("exec = __STACKI3_SPACE_HOME__/.config/polybar/scripts/date_updates_status.sh", self.text)
         script = DATE_UPDATES.read_text()
-        self.assertIn('updates_cmd="__STACKI3_HOME__/.local/bin/space menu system"', script)
+        self.assertIn('updates_cmd="__STACKI3_SPACE_HOME__/.local/bin/space menu system"', script)
         self.assertIn('%{F#7c5cff}', script)
 
     def test_updates_status_hides_zero_and_shows_icon_when_nonzero(self):

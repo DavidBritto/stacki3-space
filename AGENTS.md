@@ -2,7 +2,7 @@
 
 ## Project Structure & Module Organization
 
-STACKI3 is a Linux Mint/X11 i3 desktop package. The installer deploys files from `payload/` into the user’s home directory.
+STACKI3-Space is a Linux Mint/X11 i3 desktop package. The installer deploys files from `payload/` into the user’s home directory.
 
 - `install.sh` — local or remote installer; backs up existing dotfiles and syncs `payload/`.
 - `payload/.config/` — desktop configuration for i3, Polybar, Dunst, Picom, Rofi, GTK, qutebrowser, Yazi, systemd user units, and themes.
@@ -16,7 +16,7 @@ STACKI3 is a Linux Mint/X11 i3 desktop package. The installer deploys files from
 ```bash
 bash install.sh
 ```
-Installs from the local checkout when `payload/` exists. It creates timestamped backups under `~/.local/state/stacki3/backups/`.
+Installs from the local checkout when `payload/` exists. It creates timestamped backups under `~/.local/state/stacki3-space/backups/`.
 
 ```bash
 bash -n install.sh
@@ -30,7 +30,7 @@ python3 -m py_compile payload/.config/polybar/scripts/spotify_tui.py payload/.co
 Validates Python helpers for Spotify controls and workspace naming.
 
 ```bash
-STACKI3_REPO_URL=<repo-url> STACKI3_REPO_REF=<branch> bash install.sh
+STACKI3_SPACE_REPO_URL=<repo-url> STACKI3_SPACE_REPO_REF=<branch> bash install.sh
 ```
 Tests the remote clone/install path.
 

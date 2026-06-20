@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-cache="${XDG_CACHE_HOME:-$HOME/.cache}/stacki3/updates-count"
+cache="${XDG_CACHE_HOME:-$HOME/.cache}/stacki3-space/updates-count"
 mkdir -p "$(dirname "$cache")"
 
 now="$(date +%s)"

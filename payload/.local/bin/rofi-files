@@ -6,7 +6,7 @@ import time
 from pathlib import Path
 
 HOME = Path.home()
-CACHE_DIR = HOME / '.cache' / 'stacki3'
+CACHE_DIR = HOME / '.cache' / 'stacki3-space'
 CACHE_DIR.mkdir(parents=True, exist_ok=True)
 CACHE_FILE = CACHE_DIR / 'rofi-files.txt'
 CACHE_TTL = 600

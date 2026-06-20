@@ -6,7 +6,7 @@ if [ "${1:-}" = "--apply" ]; then
   APPLY=true
 elif [ "${1:-}" = "-h" ] || [ "${1:-}" = "--help" ]; then
   cat <<'EOF'
-Install STACKI3 base dependencies.
+Install STACKI3-Space base dependencies.
 
 Usage:
   scripts/install-dependencies.sh          # print the install plan
@@ -16,12 +16,12 @@ This script targets Linux Mint / Ubuntu / Debian-like systems.
 EOF
   exit 0
 elif [ -n "${1:-}" ]; then
-  echo "[stacki3-deps] unknown argument: $1" >&2
+  echo "[stacki3-space-deps] unknown argument: $1" >&2
   exit 2
 fi
 
 if ! command -v apt-get >/dev/null 2>&1; then
-  echo "[stacki3-deps] apt-get not found; this dependency set targets Linux Mint/Debian systems." >&2
+  echo "[stacki3-space-deps] apt-get not found; this dependency set targets Linux Mint/Debian systems." >&2
   exit 1
 fi
 
@@ -69,12 +69,12 @@ APT_PACKAGES=(
   xclip
 )
 
-echo "[stacki3-deps] apt packages:"
+echo "[stacki3-space-deps] apt packages:"
 printf '  %s\n' "${APT_PACKAGES[@]}"
 
 cat <<'EOF'
 
-[stacki3-deps] external tools still managed outside apt:
+[stacki3-space-deps] external tools still managed outside apt:
   - oh-my-posh
   - atuin
   - yazi
@@ -90,13 +90,13 @@ Install lazyjournal with:
 EOF
 
 if [ "$APPLY" != true ]; then
-  echo "[stacki3-deps] dry run only. No packages were installed."
-  echo "[stacki3-deps] Re-run with --apply to install apt packages."
+  echo "[stacki3-space-deps] dry run only. No packages were installed."
+  echo "[stacki3-space-deps] Re-run with --apply to install apt packages."
   exit 0
 fi
 
-echo "[stacki3-deps] installing apt packages"
+echo "[stacki3-space-deps] installing apt packages"
 sudo apt-get update
 sudo apt-get install -y "${APT_PACKAGES[@]}"
 
-echo "[stacki3-deps] done"
+echo "[stacki3-space-deps] done"

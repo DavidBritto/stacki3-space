@@ -32,6 +32,11 @@ def build_command(args: list[str]) -> list[str]:
     if area == "files":
         return [bin_path("tui-panel"), "files-yazi"]
 
+    if area == "screenshot":
+        if not rest:
+            rest = ["gui"]
+        return [bin_path("stack-screenshot"), *rest]
+
     if area == "theme":
         if not rest:
             rest = ["current"]
@@ -70,6 +75,7 @@ def doctor() -> int:
         ("deskmenu", bin_path("deskmenu")),
         ("stack-theme", bin_path("stack-theme")),
         ("stack-wall", bin_path("stack-wall")),
+        ("stack-screenshot", bin_path("stack-screenshot")),
     ]
     failed = 0
     for label, command in checks:
@@ -87,12 +93,13 @@ def shutil_which(command: str) -> bool:
 
 def print_help() -> None:
     print(
-        """space — central command surface for the STACKI3 desktop
+        """space — central command surface for the STACKI3-Space desktop
 
 usage:
   space menu [palette|projects|windows|workspaces|panels|audio|network|mounts|clipboard|system|help]
   space search
   space files
+  space screenshot [gui|delayed [seconds]]
   space theme {list|current|apply <name>|restore-last}
   space wall {next|prev|random|apply-last|apply <path>}
   space bar restart

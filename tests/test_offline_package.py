@@ -23,8 +23,8 @@ class OfflinePackageTest(unittest.TestCase):
     def test_installer_replaces_home_placeholders(self):
         text = INSTALLER.read_text()
         self.assertIn("replace_home_placeholders", text)
-        self.assertIn("__STACKI3_HOME__", text)
-        self.assertIn('sed -i "s#__STACKI3_HOME__#$escaped_home#g"', text)
+        self.assertIn("__STACKI3_SPACE_HOME__", text)
+        self.assertIn('sed -i "s#__STACKI3_SPACE_HOME__#$escaped_home#g"', text)
 
     def test_package_script_uses_explicit_manifest(self):
         text = PACKAGE.read_text()
@@ -37,7 +37,7 @@ class OfflinePackageTest(unittest.TestCase):
     def test_docs_explain_scp_tarball_flow(self):
         for path in [README, PACKAGE_LINK]:
             text = path.read_text()
-            self.assertIn("scp dist/stacki3-package.tar.gz", text)
+            self.assertIn("scp dist/stacki3-space-package.tar.gz", text)
             self.assertIn("bash install.sh --deps", text)
 
     def test_package_does_not_install_or_configure_cursor_app(self):

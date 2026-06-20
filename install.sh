@@ -44,7 +44,7 @@ Environment:
 Examples:
   bash install.sh
   bash install.sh --deps
-  STACKI3_SPACE_REPO_URL=<your-repo-url> bash install.sh
+  STACKI3_SPACE_REPO_URL=https://github.com/DavidBritto/stacki3-space.git bash install.sh
 EOF
 }
 
@@ -191,6 +191,7 @@ chmod +x \
   "$TARGET_HOME/.local/bin/try" \
   "$TARGET_HOME/.local/bin/space" \
   "$TARGET_HOME/.local/bin/stack-theme" \
+  "$TARGET_HOME/.local/bin/stack-screenshot" \
   "$TARGET_HOME/.config/i3/volume_notify.sh" \
   "$TARGET_HOME/.config/i3/power_menu.sh" \
   "$TARGET_HOME/.config/i3/power_auth_terminal.sh" \

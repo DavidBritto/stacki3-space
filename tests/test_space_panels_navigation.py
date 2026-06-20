@@ -27,7 +27,8 @@ class SpacePanelsNavigationTest(unittest.TestCase):
                 "󰍜 Logs · Lazyjournal",
                 "󰊢 Git · Lazygit",
                 "󰕾 Audio · Mixer",
-                "󰖩 Network · Nmtui",
+                "󰖩 Network · Connect",
+                "󰖩 Network · Advanced",
                 "󰅌 Clipboard · History",
                 "󰓝 Notes · Quick notes",
             ],
@@ -37,8 +38,13 @@ class SpacePanelsNavigationTest(unittest.TestCase):
         mod = load_deskmenu()
         labels = [label for label, _panel in mod.panel_menu_entries()]
         visible = "\n".join(labels)
-        for internal in ["audio-mixer", "network-tui", "clipboard-view", "quick-notes", "files-yazi", "lazyjournal"]:
+        for internal in ["audio-mixer", "network-connect", "network-tui", "clipboard-view", "quick-notes", "files-yazi", "lazyjournal"]:
             self.assertNotIn(internal, visible)
+
+    def test_system_menu_exposes_delayed_screenshot(self):
+        text = DESKMENU.read_text()
+        self.assertIn("stack-screenshot'), 'gui'", text)
+        self.assertIn("stack-screenshot'), 'delayed', '4'", text)
 
 
 if __name__ == "__main__":

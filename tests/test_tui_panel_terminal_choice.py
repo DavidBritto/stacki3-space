@@ -19,7 +19,7 @@ class TuiPanelTerminalChoiceTest(unittest.TestCase):
         self.assertIn("STACK_NO_AUTO_TMUX=1", self.text)
 
     def test_kitty_launcher_warnings_do_not_leak_to_parent_terminal(self):
-        self.assertIn('/tmp/stacki3-tui-panel.log 2>&1 &', self.text)
+        self.assertIn('/tmp/stacki3-space-tui-panel.log 2>&1 &', self.text)
         self.assertIn('>/dev/null 2>&1', self.text)
 
 

@@ -3,8 +3,8 @@ set -euo pipefail
 
 ROOT="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
 DIST="$ROOT/dist"
-ARCHIVE="$DIST/stacki3-package.tar.gz"
-PACKAGE_ROOT="$DIST/stacki3-package"
+ARCHIVE="$DIST/stacki3-space-package.tar.gz"
+PACKAGE_ROOT="$DIST/stacki3-space-package"
 
 mkdir -p "$DIST"
 rm -rf "$PACKAGE_ROOT" "$ARCHIVE"
@@ -25,7 +25,7 @@ cp -a \
 find "$PACKAGE_ROOT" -type d -name '__pycache__' -prune -exec rm -rf {} +
 find "$PACKAGE_ROOT" -type f -name '*.pyc' -delete
 
-tar -C "$DIST" -czf "$ARCHIVE" stacki3-package
+tar -C "$DIST" -czf "$ARCHIVE" stacki3-space-package
 rm -rf "$PACKAGE_ROOT"
 
-printf '[stacki3-package] wrote %s\n' "$ARCHIVE"
+printf '[stacki3-space-package] wrote %s\n' "$ARCHIVE"

@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+mode="${1:-gui}"
+delay="${2:-4}"
+
+picture_dir="${XDG_PICTURES_DIR:-${HOME}/Imágenes}"
+if command -v xdg-user-dir >/dev/null 2>&1; then
+  picture_dir="$(xdg-user-dir PICTURES 2>/dev/null || printf '%s\n' "$picture_dir")"
+fi
+screenshot_dir="${picture_dir}/screenshots"
+
+notify() {
+  if command -v dunstify >/dev/null 2>&1; then
+    dunstify -a system -t 2200 screenshot "$1" >/dev/null 2>&1 || true
+  fi
+}
+
+if ! command -v flameshot >/dev/null 2>&1; then
+  notify "flameshot no esta instalado"
+  exit 1
+fi
+
+case "$mode" in
+  gui)
+    exec "${HOME}/.config/i3/flameshot_gui.sh"
+    ;;
+  delayed|delay|menu)
+    mkdir -p "$screenshot_dir"
+    notify "Abre el menu ahora; capturo en ${delay}s"
+    sleep "$delay"
+    output="${screenshot_dir}/menu-$(date +%Y%m%d-%H%M%S).png"
+    flameshot full -p "$output"
+    notify "Captura guardada: ${output}"
+    ;;
+  *)
+    printf 'usage: stack-screenshot {gui|delayed [seconds]}\n' >&2
+    exit 2
+    ;;
+esac

@@ -2,7 +2,7 @@
 set -euo pipefail
 
 action="${1:-}"
-log_file="/tmp/stacki3-power-action.log"
+log_file="/tmp/stacki3-space-power-action.log"
 exec >>"$log_file" 2>&1
 
 echo "== $(date '+%F %T') power_action ${action} =="

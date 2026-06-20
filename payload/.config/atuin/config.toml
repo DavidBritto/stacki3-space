@@ -1,4 +1,4 @@
-# STACKI3 lean Atuin profile.
+# STACKI3-Space lean Atuin profile.
 # Keep useful command recall, but avoid noisy DB growth and background indexing.
 
 auto_sync = false

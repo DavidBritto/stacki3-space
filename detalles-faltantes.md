@@ -1,4 +1,4 @@
-# Detalles faltantes para mejorar STACKI3
+# Detalles faltantes para mejorar STACKI3-Space
 
 Este archivo registra mejoras pendientes del stack real. La regla base es: **mantener i3/X11 keyboard-first, sin sumar dependencias salvo que el beneficio sea claro y esté documentado**.
 

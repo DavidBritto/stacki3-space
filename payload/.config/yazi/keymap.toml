@@ -1,7 +1,7 @@
 [mgr]
 prepend_keymap = [
   { on = "<Enter>",  run = "open --hovered",                                   desc = "Open hovered file, ignoring stale selections" },
-  { on = "H",        run = 'shell "~/.local/bin/shortcuts-help yazi" --block', desc = "Open STACKI3 Yazi shortcuts" },
+  { on = "H",        run = 'shell "~/.local/bin/shortcuts-help yazi" --block', desc = "Open STACKI3-Space Yazi shortcuts" },
   { on = ["g", "h"], run = "cd ~",                                               desc = "Go to home" },
   { on = ["g", "g"], run = "cd ~/git",                                           desc = "Go to git" },
   { on = ["g", "d"], run = "cd ~/Downloads",                                     desc = "Go to downloads" },

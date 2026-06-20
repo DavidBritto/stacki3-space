@@ -1,4 +1,4 @@
-# STACKI3 Yazi theme: quiet, flat, no status pills.
+# STACKI3-Space Yazi theme: quiet, flat, no status pills.
 
 [mgr]
 cwd = { fg = "#7c5cff", bg = "#000000", bold = true }

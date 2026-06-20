@@ -21,7 +21,7 @@ WORKSPACE_NUMBER = 9
 MUSIC_GLYPH = '♪'
 FALLBACK_LABEL = f'9:spotify {MUSIC_GLYPH}'
 LABEL_LIMIT = 48
-LOCK_PATH = '/tmp/stacki3-spotify-workspace-name.lock'
+LOCK_PATH = '/tmp/stacki3-space-spotify-workspace-name.lock'
 
 
 def truncate(value: str, limit: int = LABEL_LIMIT) -> str:

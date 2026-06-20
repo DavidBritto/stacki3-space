@@ -168,7 +168,7 @@ bindsym $mod+Shift+0 move container to workspace number $ws10
 # === CONTROL DE I3
 bindsym $mod+Shift+c reload
 bindsym $mod+Shift+r restart
-bindsym $mod+Shift+e exec --no-startup-id i3-nagbar -t warning -f "pango:Berkeley Mono 11" -m "STACKI3 · salir de i3" -B "salir" "i3-msg exit" -B "cancelar" "true"
+bindsym $mod+Shift+e exec --no-startup-id i3-nagbar -t warning -f "pango:Berkeley Mono 11" -m "STACKI3-Space · salir de i3" -B "salir" "i3-msg exit" -B "cancelar" "true"
 
 
 

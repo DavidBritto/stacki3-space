@@ -10,7 +10,7 @@ I3 = ROOT / "payload/.config/i3/config"
 class CalendarTuiTest(unittest.TestCase):
     def test_date_module_click_opens_calendar_tui(self):
         text = (ROOT / "payload/.config/polybar/scripts/date_updates_status.sh").read_text()
-        self.assertIn('calendar_cmd="__STACKI3_HOME__/.config/polybar/scripts/calendar_tui.sh"', text)
+        self.assertIn('calendar_cmd="__STACKI3_SPACE_HOME__/.config/polybar/scripts/calendar_tui.sh"', text)
         self.assertIn('%{A1:%s:}', text)
 
     def test_calendar_tui_has_dependency_free_python_fallback(self):
