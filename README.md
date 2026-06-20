@@ -2,7 +2,7 @@
 # ░▀▀█░░█░░█▀█░█░░░█▀▄░░█░
 # ░▀▀▀░░▀░░▀░▀░▀▀▀░▀░▀░▀▀▀
 
-> **STACKI3** — a keyboard-first i3 desktop package built around **terminal + tmux** on Linux Mint/X11.
+**STACKI3-Space** — escritorio **keyboard-first** para Linux Mint/X11: terminal, tmux e i3 trabajando juntos, sin ruido visual.
 
 [![WM](https://img.shields.io/badge/WM-i3-4961da?style=flat-square)](#)
 [![Display](https://img.shields.io/badge/Display-X11-252a41?style=flat-square)](#)
@@ -10,360 +10,241 @@
 [![Launcher](https://img.shields.io/badge/Launcher-Rofi-67c9e4?style=flat-square)](#)
 [![Notify](https://img.shields.io/badge/Notify-Dunst-4a5a7a?style=flat-square)](#)
 
----
-
-## What is STACKI3?
-
-STACKI3 packages a real desktop workflow built on:
-
-- **i3wm** for windows and workspaces
-- **Kitty + tmux** as the actual work hub
-- **Zsh + Zinit + Oh My Posh** for the shell layer
-- **SPACE CLI + Rofi/deskmenu** for global search, menus and command surfaces
-- **Polybar** for compact status output
-- **Dunst** for dark square notifications
-- **Picom** for restrained compositor behavior
-- **Omarchy-like shell tools** (`fzf`, `zoxide`, `rg`, `fd`, `eza`, `try`) for daily terminal navigation
-- **qutebrowser** as a quick keyboard browser binding
-- **Zathura** for PDFs
-- **Yazi / lazygit / alsamixer / nmtui** as supporting TUI tools
-
-This is **not** an “everything gets its own i3 binding” desktop.
-
-The model is:
-1. open a terminal
-2. land in tmux
-3. work there
-4. use i3, Rofi and overlays only where they remove real friction
+> Inspirado en la filosofía Omarchy, pero en **i3 + X11**: sin migrar a Hyprland/Wayland, sin perder Linux Mint como base.
 
 ---
 
-## Design goals
+## Vista previa
 
-- keyboard-first
-- terminal-first
-- tmux-centered
-- low visual noise
-- square dark visual language
-- practical menus instead of gimmicky launch surfaces
-- safe Omarchy-inspired functions without migrating to Hyprland/Wayland
+<!-- Agrega capturas en docs/screenshots/ y enlázalas aquí antes del release público -->
+| Escritorio | Menú SPACE | Polybar |
+|------------|------------|---------|
+| _screenshot pendiente_ | _screenshot pendiente_ | _screenshot pendiente_ |
 
 ---
 
-## Core bindings
+## ¿Qué es?
 
-- `mod+Enter` → terminal on current workspace, without forced tmux attach
-- `mod+Shift+Enter` → main tmux terminal on workspace `terminal`
-- `mod+d` → app launcher
-- `mod+p` → SPACE global search
-- `mod+'` → window switcher
-- `mod+Shift+p` → project sessionizer through SPACE
-- `mod+grave` → TUI overlay menu
-- `mod+Shift+v` → clipboard menu
-- `mod+F1` → built-in manuals
-- `mod+b` → qutebrowser
-- `mod+Shift+x` → lock
+STACKI3-Space empaqueta un flujo de trabajo real — no un demo de atajos — en un instalador que despliega dotfiles, scripts y temas a tu `$HOME`.
 
-Workspace intent:
-- `terminal` → optional main terminal anchor
-- `browser` / `code` → named contextual workspaces
-- `9` → Spotify, renamed from MPRIS metadata as `9: Track · Artist ♪`
-- everything else opens contextually on the current workspace unless explicitly assigned or launched as an overlay/panel
+**No es** un escritorio donde cada app tiene su propio binding en i3.
 
----
-
-## Polybar status model
-
-The bar is intentionally quiet. It shows operational signals only when they matter:
-
-- left: i3 workspaces
-- center: date/time; click the date to open the compact Space calendar TUI
-- right: RAM, CPU, volume and power
-- updates are quiet when the count is `0`
-- when updates exist, a small violet `↻` appears immediately to the right of the date/time, matching the Omarchy circle-arrow affordance
-- LAN/network and music modules are intentionally removed from the bar
-
-Music context lives in workspace `9` through the Spotify workspace watcher, not as duplicated bar text.
-
----
-
-## What stays on purpose
-
-### TUI overlays
-
-These remain because they solve occasional friction well:
-
-- `htop` overlay label, with fallback to `top`
-- `lazygit`
-- `audio-mixer`
-- `network-tui`
-- `clipboard-view`
-- `quick-notes`
-- compact deep-space Kitty calendar from Polybar date click
-
-All transient TUI overlays launch in Kitty with explicit `deep-space` colors. `nmtui` also receives a matching `NEWT_COLORS` palette.
-
-These are **not** treated as the center of the workflow:
-
-- `yazi` (used from shell/tmux)
-- `aerc`
-- `calcurse`
-
-### tmux helpers
-
-Included helpers:
-
-- `tmux-copy` — copy-mode integration with system clipboard backends
-- `tmux-net-health` — compact IP/latency status segment
-- `tmux-net-debug` — popup diagnostics for quick network checks
-
-Canonical additions:
-
-- `prefix + Space` → choose-tree popup
-- `prefix + N` → network debug popup
-
-### Shell tools
-
-STACKI3 now mirrors the useful shell-tool layer from Omarchy while staying on Linux Mint/X11:
-
-- `ff` → `fzf` file picker with preview
-- `zoxide` → smarter directory jumping
-- `rg` → fast text search
-- `fd` → wrapper around Ubuntu's `fdfind`
-- `eza` → `ls`, `ll`, `lt`, `lsa`, `lta`
-- `try <name>` → dated experiment directory under `~/Work/tries`
-
-`try` is both a Zsh function, so it can `cd` the current shell, and a `~/.local/bin/try` fallback script.
-
-### SSH port forwarding
-
-Omarchy-style shell functions are available in Zsh:
-
-- `fip <host> <port...>` → forward one or more remote localhost ports to local localhost through SSH
-- `dip <port...>` → disconnect forwarded ports
-- `lip` → list active SSH localhost forwards
-
-Example:
-
-```bash
-fip nyc-dev 3000
-# localhost:3000 now reaches nyc-dev:3000
-```
-
----
-
-## Repository layout
+**Sí es** esto:
 
 ```text
-stacki3/
-├── install.sh
-├── stack.md
-├── README.md
-├── docs/
-│   └── dependencies.md
-├── dist/
-└── payload/
-    ├── .config/
-    │   ├── i3/
-    │   ├── polybar/
-    │   ├── dunst/
-    │   ├── picom/
-    │   ├── rofi/
-    │   ├── nvim/
-    │   ├── shortcuts/
-    │   ├── stack-theme/
-    │   └── polkit-oceano/        # legacy component name, not a selectable theme
-    ├── .local/bin/
-    └── .tmux.conf
+terminal → tmux → trabajo
+     ↑
+ i3, Rofi y overlays solo donde quitan fricción de verdad
 ```
+
+### Stack principal
+
+| Capa | Herramientas |
+|------|--------------|
+| Ventanas | i3wm, Picom |
+| Trabajo | Kitty, tmux, Zsh, Zinit, Oh My Posh, Atuin |
+| Superficie global | `space` CLI, Rofi, deskmenu |
+| Estado | Polybar (compacta, silenciosa cuando todo está bien) |
+| Notificaciones | Dunst (oscuro, cuadrado) |
+| Navegación shell | fzf, zoxide, ripgrep, fd, eza, `try` |
+| Archivos | Yazi desde terminal/tmux |
+| Temas | `deep-space` y `space-purple` con switcher global |
+
+Apps de apoyo incluidas en el flujo: qutebrowser, Zathura, lazygit, lazyjournal, alsamixer, nmtui, Neovim/LazyVim con tema deep-space.
 
 ---
 
-## Install
+## Filosofía
 
-### Fresh machine
+- **Teclado primero** — el ratón existe, no manda.
+- **Terminal primero** — tmux es el hub de trabajo.
+- **Poco ruido visual** — paleta deep-space, bordes cuadrados, barra quieta.
+- **Menús útiles** — acciones finales en Rofi, no callejones sin salida.
+- **Omarchy-like, Mint-native** — funciones y herramientas del ecosistema Omarchy, sobre Ubuntu/Mint sin cambiar de distro.
 
-Follow [`docs/new-machine-install.md`](./docs/new-machine-install.md) for a complete Linux Mint/X11 transition: dependencies, STACKI3 install, data restore and verification.
+---
 
-One-command GitHub bootstrap for a fresh Linux Mint/Debian-like machine:
+## Atajos esenciales
+
+| Atajo | Acción |
+|-------|--------|
+| `Mod+Enter` | Terminal en el workspace actual (sin forzar tmux attach) |
+| `Mod+Shift+Enter` | Terminal tmux principal en workspace `terminal` |
+| `Mod+d` | Lanzador de apps |
+| `Mod+p` | Búsqueda global SPACE |
+| `Mod+'` | Cambiar ventana |
+| `Mod+Shift+p` | Sessionizer de proyectos |
+| `Mod+grave` | Menú TUI overlay |
+| `Mod+Shift+v` | Menú del portapapeles |
+| `Mod+F1` | Manuales integrados |
+| `Mod+b` | qutebrowser |
+| `Mod+Shift+x` | Bloquear sesión |
+
+**Workspaces con intención:** `1:terminal` como ancla opcional, `9` para Spotify (renombrado en vivo desde MPRIS: `9: Track · Artist ♪`), el resto contextual.
+
+---
+
+## Instalación
+
+### Requisitos
+
+- Linux Mint o derivado Debian/Ubuntu-like
+- Sesión **X11** con **i3** como entorno de trabajo
+- Git y conexión a red (o paquete offline)
+
+### Rápida — máquina con Mint/X11
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/Gentleman-Programming/stacki3/main/install.sh | bash -s -- --deps
+git clone <your-repo-url> stacki3-space
+cd stacki3-space
+bash install.sh --deps
 ```
 
-Preview dependency installation:
+`--deps` instala paquetes APT y despliega el payload. Solo config (dependencias ya instaladas):
 
 ```bash
-scripts/install-dependencies.sh
-```
-
-Install dependencies:
-
-```bash
-scripts/install-dependencies.sh --apply
-```
-
-### Local test
-
-```bash
-git clone https://github.com/Gentleman-Programming/stacki3.git stacki3
-cd stacki3
 bash install.sh
 ```
 
-`bash install.sh` deploys the config payload only. To install APT dependencies and then deploy the config, run:
+### Instalador remoto (sin clonar)
+
+Cuando solo tienes `install.sh` y no el checkout completo:
 
 ```bash
-bash install.sh --deps
+STACKI3_SPACE_REPO_URL=<your-repo-url> bash install.sh --deps
 ```
 
-By default the installer preserves an existing `~/.zshrc` and only adds safe STACKI3 aliases such as `lj` for `lazyjournal`. To intentionally replace `~/.zshrc` with the packaged version on a clean machine, run:
+### Preservar tu `.zshrc`
+
+Por defecto el instalador **no pisa** un `~/.zshrc` existente; solo agrega aliases seguros (por ejemplo `lj` → lazyjournal). Para reemplazarlo en una máquina limpia:
 
 ```bash
-STACKI3_OVERWRITE_ZSHRC=1 bash install.sh
+STACKI3_SPACE_OVERWRITE_ZSHRC=1 bash install.sh
 ```
 
-### Remote bootstrap
+### Paquete offline
 
-```bash
-curl -fsSL https://raw.githubusercontent.com/Gentleman-Programming/stacki3/main/install.sh | bash -s -- --deps
-```
-
-For forks or private repos:
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/Gentleman-Programming/stacki3/main/install.sh \
-  | STACKI3_REPO_URL=https://github.com/me/stacki3.git bash -s -- --deps
-```
-
-### Offline package
-
-Create a transferable package:
+En la máquina origen:
 
 ```bash
 scripts/package.sh
+scp dist/stacki3-space-package.tar.gz user@destino:~/
 ```
 
-Copy only the generated archive to the target machine:
+En destino:
 
 ```bash
-scp dist/stacki3-package.tar.gz user@target:~/
-```
-
-On the target machine:
-
-```bash
-tar -xzf ~/stacki3-package.tar.gz
-cd ~/stacki3-package
+tar -xzf ~/stacki3-space-package.tar.gz
+cd ~/stacki3-space-package
 bash install.sh --deps
 ```
 
-Use `bash install.sh` without `--deps` only when dependencies are already installed and you only want to deploy the config payload.
+Guía completa de máquina nueva: [`docs/new-machine-install.md`](./docs/new-machine-install.md).
 
 ---
 
+## Comando `space`
 
-## SPACE command surface
-
-`space` is the canonical daily CLI for the desktop layer. It wraps the existing stable helpers instead of replacing them:
+Superficie CLI unificada del escritorio:
 
 ```bash
-space search
-space menu
-space menu projects
-space theme list
-space theme current
+space search              # búsqueda global
+space menu                # menú por categorías
+space menu projects       # acceso directo a proyectos
 space theme apply deep-space
 space wall next
 space bar restart
 space system reload
-space doctor
+space doctor              # chequeo de comandos core
 ```
 
-Compatibility helpers remain available: `deskmenu`, `stack-theme`, `stack-wall`, `tui-panel`, `fd` and `try`. Treat the lower-level helpers as implementation details unless you are debugging a specific layer.
+Helpers de compatibilidad: `deskmenu`, `stack-theme`, `stack-wall`, `tui-panel`, `fd`, `try`.
 
-`deskmenu` uses category glyphs and a minimal `← volver` affordance so the public menu reads like a real command surface, not a personal script dump.
+---
 
-## Theme switching
+## Temas
 
-STACKI3 includes a global theme switcher. Current themes:
-
-- `deep-space` — current black deep-space theme.
-- `space-purple` — alternate purple space palette.
+Dos paletas seleccionables con backup automático antes de cada apply:
 
 ```bash
 stack-theme list
-stack-theme current
-stack-theme apply deep-space
-stack-theme apply space-purple
+stack-theme apply deep-space    # negro deep-space (default)
+stack-theme apply space-purple  # variante violeta
 stack-theme restore-last
 ```
 
-Every apply creates a timestamped backup in `~/.local/state/stacki3-theme/backups/`. The switcher applies the shared palette to i3, Polybar, Rofi, Dunst, Picom, tmux, Kitty, Zsh/Oh My Posh, GTK/Nemo and terminal/editor theme files shipped by the stack. The installer also deploys a LazyVim-compatible Neovim plugin that pins the editor to the `deep-space` palette. Nemo intentionally stays on `CrewDragon-Y` for both themes.
-
-The selectable theme names are only `deep-space` and `space-purple`. Legacy paths such as `rofi/oceano.rasi` and `polkit-oceano` are component names, not active theme names.
-
-## What the installer deploys
-
-- i3 config + helper scripts, including the Spotify workspace watcher
-- Polybar config + scripts
-- Dunst config
-- Picom config
-- Rofi theme/config
-- Neovim/LazyVim deep-space theme plugin
-- stack-theme theme definitions for `deep-space` and `space-purple`
-- shortcut/manual pages
-- desktop helper scripts in `~/.local/bin`
-- tmux config + clipboard/network helpers
-- shell tool wrappers (`fd`, `try`)
-
-The installer creates timestamped backups before overwriting files.
+El switcher sincroniza i3, Polybar, Rofi, Dunst, Picom, tmux, Kitty, Zsh/Oh My Posh, GTK y archivos de editor incluidos en el stack.
 
 ---
 
-## Dependencies
+## Polybar
 
-See [`docs/dependencies.md`](./docs/dependencies.md).
+Barra intencionalmente silenciosa:
 
-This repo intentionally keeps dependency installation separate from config deployment.
+- **Izquierda:** workspaces i3
+- **Centro:** fecha/hora — click en la fecha abre el calendario TUI compacto
+- **Derecha:** RAM, CPU, volumen, energía
+- **Updates:** icono violeta `↻` junto a la fecha solo cuando hay actualizaciones pendientes
 
-For migration planning, see [`docs/migration-manifest.md`](./docs/migration-manifest.md).
-
-## Current maintenance notes
-
-- Atuin uses a lean local profile: no daemon autostart, no sync records, no AI, no failed-command storage, and noisy commands filtered.
-- Polybar date/update status is implemented by `date_updates_status.sh`, not `internal/date`, so click handling stays explicit and reliable.
-- GUI process verification must happen outside the Codex sandbox when relaunching Polybar, i3, or Kitty windows.
+La música vive en el workspace `9` (Spotify + watcher MPRIS), no duplicada en la barra.
 
 ---
 
-## Operating model
+## Estructura del repo
 
-Read [`stack.md`](./stack.md) first.
-
-That file defines:
-- what is truly central
-- what is merely installed
-- which shortcuts are canonical
-- why terminal + tmux is the center of gravity
-
----
-
-## Current assumptions
-
-- Linux Mint / Ubuntu-like userland
-- X11 session
-- i3 as the real working session
-- Cinnamon still present for compatibility, but not treated as the active UX layer
+```text
+stacki3-space/
+├── install.sh          # instalador local o remoto
+├── stack.md            # modelo operativo del stack (léelo primero)
+├── payload/            # dotfiles desplegados a $HOME
+│   ├── .config/        # i3, polybar, rofi, dunst, picom, temas…
+│   └── .local/bin/     # space, stack-theme, tui-panel…
+├── scripts/            # dependencias, empaquetado, verificación
+├── docs/               # guías de instalación y dependencias
+└── tests/              # pruebas de integración del payload
+```
 
 ---
 
-## Publish checklist
+## Documentación
 
-- [x] replace bootstrap placeholders in `README.md`, `install.sh` and `PACKAGE_LINK.txt`
-- [ ] confirm the final GitHub owner/repo before public release
-- [ ] add screenshots to the repo
-- [ ] test `install.sh` in a clean user session
-- [ ] verify wallpaper path and Slick Greeter styling after reboot
-- [ ] regenerate `dist/stacki3-package.tar.gz`
-- [ ] push to GitHub
+| Documento | Contenido |
+|-----------|-----------|
+| [`stack.md`](./stack.md) | Modelo operativo, apps canónicas, atajos |
+| [`docs/dependencies.md`](./docs/dependencies.md) | Paquetes APT y herramientas externas |
+| [`docs/new-machine-install.md`](./docs/new-machine-install.md) | Transición completa a Mint/X11 |
+| [`docs/migration-manifest.md`](./docs/migration-manifest.md) | Plan de migración entre máquinas |
+| [`AGENTS.md`](./AGENTS.md) | Guía para contribuidores y agentes |
+
+---
+
+## Verificación
+
+```bash
+# Sintaxis shell
+bash -n install.sh
+find payload -type f -name '*.sh' -exec bash -n {} +
+
+# Python helpers
+python3 -m py_compile payload/.config/i3/spotify_workspace_name.py
+
+# Suite de tests (requiere pytest)
+python3 -m pytest tests/ -q
+
+# Post-instalación
+scripts/verify-install.sh
+```
+
+Tras cambios en i3/Polybar: `i3-msg reload` y reiniciar Polybar con `payload/.config/polybar/launch.sh`.
+
+---
+
+## Créditos e inspiración
+
+- Filosofía y herramientas shell inspiradas en **[Omarchy](https://omarchy.org)** — adaptadas a i3/X11 en Linux Mint.
+
+---
+
+## Licencia
+
+[MIT](./LICENSE)

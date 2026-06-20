@@ -1,20 +1,24 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-REPO_OWNER="${STACKI3_REPO_OWNER:-Gentleman-Programming}"
-REPO_NAME="${STACKI3_REPO_NAME:-stacki3}"
-REPO_URL="${STACKI3_REPO_URL:-https://github.com/${REPO_OWNER}/${REPO_NAME}.git}"
-REPO_REF="${STACKI3_REPO_REF:-main}"
+REPO_REF="${STACKI3_SPACE_REPO_REF:-main}"
+if [ -n "${STACKI3_SPACE_REPO_URL:-}" ]; then
+  REPO_URL="$STACKI3_SPACE_REPO_URL"
+elif [ -n "${STACKI3_SPACE_REPO_OWNER:-}" ] && [ -n "${STACKI3_SPACE_REPO_NAME:-}" ]; then
+  REPO_URL="https://github.com/${STACKI3_SPACE_REPO_OWNER}/${STACKI3_SPACE_REPO_NAME}.git"
+else
+  REPO_URL=""
+fi
 TARGET_HOME="${HOME}"
-STATE_DIR="${XDG_STATE_HOME:-$HOME/.local/state}/stacki3"
+STATE_DIR="${XDG_STATE_HOME:-$HOME/.local/state}/stacki3-space"
 BACKUP_DIR="$STATE_DIR/backups/$(date +%Y%m%d-%H%M%S)"
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 WORK_DIR=""
-INSTALL_DEPS="${STACKI3_INSTALL_DEPS:-0}"
+INSTALL_DEPS="${STACKI3_SPACE_INSTALL_DEPS:-0}"
 
 usage() {
   cat <<EOF
-STACKI3 installer
+STACKI3-Space installer
 
 Usage:
   bash install.sh [--deps] [--help]
@@ -22,25 +26,25 @@ Usage:
 Options:
   --deps, --install-deps, --full
                       Install Linux Mint/Debian APT dependencies before
-                      deploying the STACKI3 config payload.
+                      deploying the STACKI3-Space config payload.
 
 Environment:
-  STACKI3_REPO_OWNER  GitHub owner used by curl/bootstrap installs.
-                      Default: Gentleman-Programming
-  STACKI3_REPO_NAME   GitHub repository name. Default: stacki3
-  STACKI3_REPO_URL    Full git URL. Overrides owner/name.
-  STACKI3_REPO_REF    Branch, tag, or ref to clone. Default: main
-  STACKI3_OVERWRITE_ZSHRC
+  STACKI3_SPACE_REPO_URL    Git remote to clone when payload/ is not bundled
+                      with install.sh. Required for remote-only installs.
+  STACKI3_SPACE_REPO_OWNER  Optional GitHub owner; used with STACKI3_SPACE_REPO_NAME
+                      when STACKI3_SPACE_REPO_URL is unset.
+  STACKI3_SPACE_REPO_NAME   Optional GitHub repository name.
+  STACKI3_SPACE_REPO_REF    Branch, tag, or ref to clone. Default: main
+  STACKI3_SPACE_OVERWRITE_ZSHRC
                       Set to 1 to replace an existing ~/.zshrc.
                       Default: keep existing ~/.zshrc and only add safe aliases.
-  STACKI3_INSTALL_DEPS
+  STACKI3_SPACE_INSTALL_DEPS
                       Set to 1 to install APT dependencies before deployment.
 
 Examples:
   bash install.sh
   bash install.sh --deps
-  STACKI3_REPO_URL=https://github.com/me/stacki3.git bash install.sh
-  curl -fsSL https://raw.githubusercontent.com/Gentleman-Programming/stacki3/main/install.sh | bash -s -- --deps
+  STACKI3_SPACE_REPO_URL=<your-repo-url> bash install.sh
 EOF
 }
 
@@ -54,7 +58,7 @@ while [ "$#" -gt 0 ]; do
       INSTALL_DEPS=1
       ;;
     *)
-      echo "[stacki3] unknown argument: $1" >&2
+      echo "[stacki3-space] unknown argument: $1" >&2
       usage >&2
       exit 2
       ;;
@@ -64,13 +68,13 @@ done
 
 need() {
   command -v "$1" >/dev/null 2>&1 || {
-    echo "[stacki3] missing dependency: $1" >&2
+    echo "[stacki3-space] missing dependency: $1" >&2
     exit 1
   }
 }
 
 log() {
-  printf '[stacki3] %s\n' "$*"
+  printf '[stacki3-space] %s\n' "$*"
 }
 
 cleanup() {
@@ -86,14 +90,19 @@ need install
 if [ -d "$SCRIPT_DIR/payload" ]; then
   SRC_ROOT="$SCRIPT_DIR"
 else
+  if [ -z "$REPO_URL" ]; then
+    echo "[stacki3-space] payload/ not found next to install.sh and no git remote configured" >&2
+    echo "[stacki3-space] run from this repo checkout, set STACKI3_SPACE_REPO_URL, or use scripts/package.sh" >&2
+    exit 1
+  fi
   WORK_DIR="$(mktemp -d)"
   log "cloning $REPO_URL#$REPO_REF"
-  git clone --depth 1 --branch "$REPO_REF" "$REPO_URL" "$WORK_DIR/repo" >/dev/null 2>&1
+  git clone --depth 1 --branch "$REPO_REF" "$REPO_URL" "$WORK_DIR/repo"
   SRC_ROOT="$WORK_DIR/repo"
 fi
 
 PAYLOAD="$SRC_ROOT/payload"
-[ -d "$PAYLOAD" ] || { echo "[stacki3] payload not found" >&2; exit 1; }
+[ -d "$PAYLOAD" ] || { echo "[stacki3-space] payload not found" >&2; exit 1; }
 
 if [ "$INSTALL_DEPS" = "1" ]; then
   log "installing APT dependencies"
@@ -120,7 +129,7 @@ while IFS= read -r rel; do
 done < <(cd "$PAYLOAD" && find . -mindepth 1 ! -type d | sed 's#^\./##' | sort)
 
 log "syncing payload to $TARGET_HOME"
-if [ "${STACKI3_OVERWRITE_ZSHRC:-0}" = "1" ] || [ ! -e "$TARGET_HOME/.zshrc" ]; then
+if [ "${STACKI3_SPACE_OVERWRITE_ZSHRC:-0}" = "1" ] || [ ! -e "$TARGET_HOME/.zshrc" ]; then
   rsync -a "$PAYLOAD/" "$TARGET_HOME/"
 else
   rsync -a --exclude='.zshrc' "$PAYLOAD/" "$TARGET_HOME/"
@@ -131,8 +140,8 @@ replace_home_placeholders() {
   escaped_home="$(printf '%s' "$TARGET_HOME" | sed 's#[/&]#\\&#g')"
 
   while IFS= read -r file; do
-    if grep -Iq . "$file" && grep -q "__STACKI3_HOME__" "$file"; then
-      sed -i "s#__STACKI3_HOME__#$escaped_home#g" "$file"
+    if grep -Iq . "$file" && grep -q "__STACKI3_SPACE_HOME__" "$file"; then
+      sed -i "s#__STACKI3_SPACE_HOME__#$escaped_home#g" "$file"
     fi
   done < <(
     find "$TARGET_HOME/.config" "$TARGET_HOME/.local/bin" -type f 2>/dev/null
