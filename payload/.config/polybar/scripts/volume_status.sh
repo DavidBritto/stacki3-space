@@ -3,8 +3,19 @@
 set -euo pipefail
 
 sink="@DEFAULT_SINK@"
+colors_file="$HOME/.config/polybar/colors-generated.ini"
 accent="#7c5cff"
 dim="#444b6f"
+white="#ffffff"
+
+if [ -f "$colors_file" ]; then
+  accent="$(awk -F'= ' '/^primary = /{print $2}' "$colors_file" | head -n1)"
+  dim="$(awk -F'= ' '/^dim = /{print $2}' "$colors_file" | head -n1)"
+  white="$(awk -F'= ' '/^white = /{print $2}' "$colors_file" | head -n1)"
+  [ -n "$accent" ] || accent="#7c5cff"
+  [ -n "$dim" ] || dim="#444b6f"
+  [ -n "$white" ] || white="#ffffff"
+fi
 
 volume="$(pactl get-sink-volume "$sink" 2>/dev/null | awk 'NR==1 {gsub(/%/, "", $5); print $5}' || true)"
 muted="$(pactl get-sink-mute "$sink" 2>/dev/null | awk '{print $2}' || true)"
@@ -29,7 +40,7 @@ for _ in $(seq 1 "$pos" 2>/dev/null); do left+="─"; done
 for _ in $(seq 1 $((slots - pos)) 2>/dev/null); do right+="─"; done
 
 if [ "${muted:-yes}" = "yes" ]; then
-  printf 'VOL %%{F%s}%s%%{F#ffffff}│%%{F%s}%s%%{F-}\n' "$dim" "$left" "$dim" "$right"
+  printf 'VOL %%{F%s}%s%%{F%s}│%%{F%s}%s%%{F-}\n' "$dim" "$left" "$white" "$dim" "$right"
 else
-  printf 'VOL %%{F%s}%s%%{F#ffffff}│%s%%{F-}\n' "$accent" "$left" "$right"
+  printf 'VOL %%{F%s}%s%%{F%s}│%s%%{F-}\n' "$accent" "$left" "$white" "$right"
 fi

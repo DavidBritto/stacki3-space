@@ -4,6 +4,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 POLYBAR = ROOT / "payload/.config/polybar/config.ini"
 DATE_UPDATES = ROOT / "payload/.config/polybar/scripts/date_updates_status.sh"
+VOLUME_STATUS = ROOT / "payload/.config/polybar/scripts/volume_status.sh"
+COLORS_GENERATED = ROOT / "payload/.config/polybar/colors-generated.ini"
 
 
 class PolybarSpaceModulesTest(unittest.TestCase):
@@ -38,6 +40,18 @@ class PolybarSpaceModulesTest(unittest.TestCase):
         self.assertIn("printf '\\n'", script)
         self.assertIn("↻", script)
         self.assertNotIn("UPD %s |", script)
+
+    def test_volume_slider_reads_generated_theme_colors(self):
+        script = VOLUME_STATUS.read_text()
+        colors = COLORS_GENERATED.read_text()
+
+        self.assertIn('colors_file="$HOME/.config/polybar/colors-generated.ini"', script)
+        self.assertIn('/^primary = /', script)
+        self.assertIn('/^dim = /', script)
+        self.assertIn('/^white = /', script)
+        self.assertNotIn('%{F#ffffff}│', script)
+        self.assertIn("dim = #444b6f", colors)
+        self.assertIn("white = #ffffff", colors)
 
 
 if __name__ == "__main__":
