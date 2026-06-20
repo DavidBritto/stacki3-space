@@ -1,0 +1,93 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+APP_ROOT="${STACKI3_SPACE_ROOT:-/usr/share/stacki3-space}"
+INSTALLER="$APP_ROOT/install.sh"
+VERIFY_SCRIPT="$APP_ROOT/scripts/verify-install.sh"
+DEPS_SCRIPT="$APP_ROOT/scripts/install-dependencies.sh"
+VERSION_FILE="$APP_ROOT/VERSION"
+
+usage() {
+  cat <<'EOF'
+STACKI3-Space package command
+
+Usage:
+  stacki3-space apply [--deps]
+  stacki3-space deps [--apply]
+  stacki3-space doctor
+  stacki3-space version
+  stacki3-space path
+  stacki3-space help
+
+Commands:
+  apply     Apply the packaged payload to the current user's $HOME.
+  deps      Preview or install the desktop dependency set.
+  doctor    Run post-install checks for commands and deployed files.
+  version   Print the installed stacki3-space package version.
+  path      Print the packaged application root.
+
+Notes:
+  apt upgrades only update the packaged files under /usr/share/stacki3-space.
+  Run "stacki3-space apply" explicitly when you want to update your user config.
+EOF
+}
+
+need_file() {
+  local path="$1"
+  local hint="$2"
+
+  if [ ! -f "$path" ]; then
+    echo "[stacki3-space] missing $path" >&2
+    echo "[stacki3-space] $hint" >&2
+    exit 1
+  fi
+}
+
+print_version() {
+  if command -v dpkg-query >/dev/null 2>&1; then
+    if dpkg-query -W -f='${Version}\n' stacki3-space 2>/dev/null; then
+      return 0
+    fi
+  fi
+
+  if [ -f "$VERSION_FILE" ]; then
+    cat "$VERSION_FILE"
+    return 0
+  fi
+
+  echo "unknown"
+}
+
+cmd="${1:-help}"
+if [ "$#" -gt 0 ]; then
+  shift
+fi
+
+case "$cmd" in
+  apply)
+    need_file "$INSTALLER" "reinstall the stacki3-space package or set STACKI3_SPACE_ROOT to a source checkout"
+    bash "$INSTALLER" "$@"
+    ;;
+  deps)
+    need_file "$DEPS_SCRIPT" "reinstall the stacki3-space package or set STACKI3_SPACE_ROOT to a source checkout"
+    bash "$DEPS_SCRIPT" "$@"
+    ;;
+  doctor)
+    need_file "$VERIFY_SCRIPT" "run stacki3-space apply first if the packaged files are present but user files are missing"
+    bash "$VERIFY_SCRIPT" "$@"
+    ;;
+  version)
+    print_version
+    ;;
+  path)
+    printf '%s\n' "$APP_ROOT"
+    ;;
+  help|-h|--help)
+    usage
+    ;;
+  *)
+    echo "[stacki3-space] unknown command: $cmd" >&2
+    usage >&2
+    exit 2
+    ;;
+esac

@@ -1,0 +1,8 @@
+VERSION usr/share/stacki3-space/
+README.md usr/share/stacki3-space/
+stack.md usr/share/stacki3-space/
+install.sh usr/share/stacki3-space/
+bin/stacki3-space usr/bin/
+docs usr/share/stacki3-space/
+payload usr/share/stacki3-space/
+scripts usr/share/stacki3-space/

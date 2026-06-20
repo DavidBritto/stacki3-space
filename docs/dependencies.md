@@ -2,11 +2,22 @@
 
 This repo packages a working config layer. Dependency installation is intentionally separate from config deployment so a fresh machine can be reviewed before packages are installed.
 
+When installed through APT, the `stacki3-space` package only ships the STACKI3-Space payload and command wrapper. External desktop apps such as i3, Polybar, Rofi, Dunst, Picom and Kitty remain official APT packages; STACKI3-Space lists them as package recommendations and can still install the same set with `stacki3-space apply --deps`.
+
 The lists below are split into:
 - **APT packages** verified against the current system
 - **External/manual tools** used by the setup but not mapped here to an apt package from this machine
 
 ## Quick path
+
+APT package path:
+
+```bash
+sudo apt install stacki3-space
+stacki3-space apply --deps
+```
+
+Checkout/offline path:
 
 Preview the dependency plan:
 

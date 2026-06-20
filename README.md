@@ -18,6 +18,8 @@
 
 > Inspirado en la filosofía Omarchy, pero en **i3 + X11**: sin migrar a Hyprland/Wayland, sin perder Linux Mint como base.
 
+Landing pública: [`davidbritto.github.io/stacki3-space`](https://davidbritto.github.io/stacki3-space)
+
 ---
 
 ## Vista previa
@@ -101,7 +103,29 @@ Apps de apoyo incluidas en el flujo: qutebrowser, Zathura, lazygit, lazyjournal,
 - Sesión **X11** con **i3** como entorno de trabajo
 - Git y conexión a red (o paquete offline)
 
-### Rápida — máquina con Mint/X11
+### Recomendada — APT en Mint/X11
+
+```bash
+sudo install -d -m 0755 /etc/apt/keyrings
+curl -fsSL https://davidbritto.github.io/stacki3-space/stacki3-space-archive-keyring.asc \
+  | sudo tee /etc/apt/keyrings/stacki3-space.asc >/dev/null
+echo "deb [arch=amd64 signed-by=/etc/apt/keyrings/stacki3-space.asc] https://davidbritto.github.io/stacki3-space stable main" \
+  | sudo tee /etc/apt/sources.list.d/stacki3-space.list >/dev/null
+sudo apt update
+sudo apt install stacki3-space
+stacki3-space apply --deps
+```
+
+`apt` instala y actualiza STACKI3-Space en `/usr/share/stacki3-space`. Tus archivos en `$HOME` solo cambian cuando ejecutas explícitamente `stacki3-space apply`, que mantiene backups bajo `~/.local/state/stacki3-space/backups/`.
+
+Si el repositorio todavía no está firmado en tu fork, usa temporalmente:
+
+```bash
+echo "deb [trusted=yes arch=amd64] https://davidbritto.github.io/stacki3-space stable main" \
+  | sudo tee /etc/apt/sources.list.d/stacki3-space.list >/dev/null
+```
+
+### Desarrollo — checkout local
 
 ```bash
 git clone https://github.com/DavidBritto/stacki3-space.git
@@ -109,7 +133,7 @@ cd stacki3-space
 bash install.sh --deps
 ```
 
-`--deps` instala paquetes APT y despliega el payload. Solo config (dependencias ya instaladas):
+`--deps` instala paquetes APT oficiales y despliega el payload. Solo config (dependencias ya instaladas):
 
 ```bash
 bash install.sh
@@ -149,6 +173,7 @@ bash install.sh --deps
 ```
 
 Guía completa de máquina nueva: [`docs/new-machine-install.md`](./docs/new-machine-install.md).
+Detalles del repositorio APT: [`docs/apt-repository.md`](./docs/apt-repository.md).
 
 ---
 
@@ -220,8 +245,10 @@ stacki3-space/
 | Documento | Contenido |
 |-----------|-----------|
 | [`stack.md`](./stack.md) | Modelo operativo, apps canónicas, atajos |
+| [`docs/apt-repository.md`](./docs/apt-repository.md) | Publicación y actualización por APT |
 | [`docs/dependencies.md`](./docs/dependencies.md) | Paquetes APT y herramientas externas |
 | [`docs/new-machine-install.md`](./docs/new-machine-install.md) | Transición completa a Mint/X11 |
+| [`docs/package-verification.md`](./docs/package-verification.md) | Build local, inspección y prueba del `.deb` |
 | [`docs/migration-manifest.md`](./docs/migration-manifest.md) | Plan de migración entre máquinas |
 | [`AGENTS.md`](./AGENTS.md) | Guía para contribuidores y agentes |
 
@@ -239,6 +266,10 @@ python3 -m py_compile payload/.config/i3/spotify_workspace_name.py
 
 # Suite de tests (requiere pytest)
 python3 -m pytest tests/ -q
+
+# Paquete Debian
+dpkg-buildpackage -us -uc -b
+dpkg-deb --contents ../stacki3-space_*_all.deb
 
 # Post-instalación
 scripts/verify-install.sh

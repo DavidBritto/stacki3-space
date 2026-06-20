@@ -1,0 +1,72 @@
+Source: stacki3-space
+Section: x11
+Priority: optional
+Maintainer: David Britto <DavidBritto@users.noreply.github.com>
+Build-Depends: debhelper-compat (= 13)
+Standards-Version: 4.6.2
+Homepage: https://github.com/DavidBritto/stacki3-space
+Rules-Requires-Root: no
+
+Package: stacki3-space
+Architecture: all
+Depends:
+ bash,
+ coreutils,
+ findutils,
+ git,
+ grep,
+ rsync,
+ sed,
+ ${misc:Depends}
+Recommends:
+ alsa-utils,
+ chafa,
+ curl,
+ dex,
+ dunst,
+ eza,
+ fd-find,
+ feh,
+ ffmpeg,
+ flameshot,
+ fzf,
+ gnome-terminal,
+ htop,
+ i3-wm,
+ i3lock,
+ imagemagick,
+ kitty,
+ lightdm,
+ nemo,
+ netcat-openbsd,
+ network-manager,
+ p7zip-full,
+ picom,
+ playerctl,
+ polybar,
+ poppler-utils,
+ python3-gi,
+ qutebrowser,
+ ripgrep,
+ rofi,
+ slick-greeter,
+ tmux,
+ xclip,
+ xdotool,
+ xsel,
+ xss-lock,
+ zathura,
+ zoxide,
+ zsh
+Suggests:
+ btop,
+ brave-browser,
+ wl-clipboard
+Description: keyboard-first i3/X11 desktop configuration layer
+ STACKI3-Space packages an i3, Polybar, Rofi, Dunst, tmux and shell
+ workflow for Linux Mint and other Debian-like X11 desktops.
+ .
+ This package installs the STACKI3-Space payload under
+ /usr/share/stacki3-space and provides the stacki3-space command. User
+ configuration is applied explicitly with stacki3-space apply, so apt
+ upgrades do not overwrite files in $HOME automatically.

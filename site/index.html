@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="dark">
+    <meta
+      name="description"
+      content="STACKI3-Space es un escritorio i3/X11 keyboard-first para Linux Mint: terminal, tmux, Rofi, Polybar y temas actualizables por APT."
+    >
+    <title>STACKI3-Space - i3/X11 keyboard-first para Linux Mint</title>
+    <link rel="stylesheet" href="./styles.css">
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="#top" aria-label="STACKI3-Space home">
+        <span class="brand-mark">S3</span>
+        <span>STACKI3-Space</span>
+      </a>
+      <nav class="nav" aria-label="Principal">
+        <a href="#workflow">Flujo</a>
+        <a href="#install">Instalar</a>
+        <a href="#updates">Actualizar</a>
+        <a href="https://github.com/DavidBritto/stacki3-space">GitHub</a>
+      </nav>
+    </header>
+
+    <main id="top">
+      <section class="hero section">
+        <div class="hero-copy">
+          <p class="eyebrow">Linux Mint · X11 · i3 · tmux</p>
+          <h1>Un escritorio keyboard-first que se actualiza como un paquete más.</h1>
+          <p class="lead">
+            STACKI3-Space empaqueta un flujo real de trabajo: i3 como estructura,
+            tmux como hub, Rofi como superficie de acción y Polybar como estado
+            silencioso. Sin migrar a Wayland. Sin abandonar Mint.
+          </p>
+          <div class="actions">
+            <a class="button primary" href="#install">Instalar por APT</a>
+            <a class="button secondary" href="https://github.com/DavidBritto/stacki3-space">Ver el repo</a>
+          </div>
+          <dl class="quick-facts" aria-label="Resumen">
+            <div>
+              <dt>Base</dt>
+              <dd>Mint / Debian-like</dd>
+            </div>
+            <div>
+              <dt>Sesión</dt>
+              <dd>X11 + i3</dd>
+            </div>
+            <div>
+              <dt>Update</dt>
+              <dd>APT + apply explícito</dd>
+            </div>
+          </dl>
+        </div>
+
+        <div class="desktop-card" aria-label="Vista conceptual de STACKI3-Space">
+          <div class="bar">
+            <span>1:terminal</span>
+            <span>9: Track · Artist</span>
+            <span>RAM CPU VOL</span>
+          </div>
+          <div class="desktop-grid">
+            <section class="terminal-window">
+              <div class="window-title">tmux · work</div>
+              <pre><code>$ space search
+> projects
+> panels
+> system
+
+$ stack-theme apply deep-space
+[ok] i3 polybar rofi dunst tmux</code></pre>
+            </section>
+            <section class="menu-window">
+              <div class="window-title">SPACE menu</div>
+              <ul>
+                <li>Projects</li>
+                <li>Windows</li>
+                <li>Clipboard</li>
+                <li>System</li>
+              </ul>
+            </section>
+          </div>
+        </div>
+      </section>
+
+      <section id="workflow" class="section split">
+        <div>
+          <p class="eyebrow">Qué es</p>
+          <h2>No es una colección de dotfiles. Es un recorrido diario.</h2>
+          <p>
+            La idea es reducir cambios de contexto: abrir, buscar, cambiar tema,
+            revisar estado y volver al trabajo desde una superficie coherente.
+          </p>
+        </div>
+        <div class="cards">
+          <article class="card">
+            <h3>Terminal primero</h3>
+            <p>Kitty, Zsh y tmux sostienen el trabajo; i3 ordena sin robar protagonismo.</p>
+          </article>
+          <article class="card">
+            <h3>Menús con salida</h3>
+            <p>`space`, Rofi y overlays TUI exponen acciones reales, no callejones sin salida.</p>
+          </article>
+          <article class="card">
+            <h3>Ruido bajo</h3>
+            <p>Deep-space, Polybar compacta y Dunst oscuro mantienen el sistema visible pero quieto.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section command-strip" aria-label="Comandos principales">
+        <div>
+          <span class="command-label">Superficie diaria</span>
+          <code>space search</code>
+          <code>space menu</code>
+          <code>space theme apply deep-space</code>
+          <code>space bar restart</code>
+        </div>
+      </section>
+
+      <section id="install" class="section install">
+        <div class="section-heading">
+          <p class="eyebrow">Instalación</p>
+          <h2>APT instala el producto. Tú decides cuándo aplicar tu HOME.</h2>
+          <p>
+            El paquete coloca STACKI3-Space en `/usr/share/stacki3-space`.
+            Tus dotfiles se actualizan solo cuando ejecutas `stacki3-space apply`.
+          </p>
+        </div>
+        <div class="code-panel">
+          <button class="copy-label" type="button" aria-hidden="true">APT</button>
+          <pre><code>sudo install -d -m 0755 /etc/apt/keyrings
+curl -fsSL https://davidbritto.github.io/stacki3-space/stacki3-space-archive-keyring.asc \
+  | sudo tee /etc/apt/keyrings/stacki3-space.asc >/dev/null
+echo "deb [arch=amd64 signed-by=/etc/apt/keyrings/stacki3-space.asc] https://davidbritto.github.io/stacki3-space stable main" \
+  | sudo tee /etc/apt/sources.list.d/stacki3-space.list >/dev/null
+sudo apt update
+sudo apt install stacki3-space
+stacki3-space apply --deps</code></pre>
+        </div>
+      </section>
+
+      <section id="updates" class="section split">
+        <div>
+          <p class="eyebrow">Actualizaciones</p>
+          <h2>Ideal para dogfooding: mejoras aquí, update allá.</h2>
+          <p>
+            Publicas una release, GitHub Pages sirve el repo APT, y tu notebook
+            recibe la nueva versión con el flujo normal de paquetes.
+          </p>
+        </div>
+        <ol class="steps">
+          <li>
+            <span>1</span>
+            <p>Mejoras el repo y publicas tag/release.</p>
+          </li>
+          <li>
+            <span>2</span>
+            <p>GitHub Actions construye el `.deb` y actualiza `dists/` + `pool/`.</p>
+          </li>
+          <li>
+            <span>3</span>
+            <p>El usuario corre `sudo apt update && sudo apt upgrade`.</p>
+          </li>
+          <li>
+            <span>4</span>
+            <p>`stacki3-space apply` sincroniza el payload con backups.</p>
+          </li>
+        </ol>
+      </section>
+
+      <section class="section final-cta">
+        <p class="eyebrow">Omarchy-like, Mint-native</p>
+        <h2>Para quien quiere un escritorio de trabajo, no una demo de atajos.</h2>
+        <div class="actions centered">
+          <a class="button primary" href="#install">Instalar</a>
+          <a class="button secondary" href="https://github.com/DavidBritto/stacki3-space/blob/main/README.md">Leer README</a>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <span>STACKI3-Space</span>
+      <a href="https://github.com/DavidBritto/stacki3-space">GitHub</a>
+      <a href="https://github.com/DavidBritto/stacki3-space/blob/main/docs/apt-repository.md">APT docs</a>
+    </footer>
+  </body>
+</html>

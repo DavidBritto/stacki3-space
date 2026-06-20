@@ -1,0 +1,5 @@
+stacki3-space (0.1.0) stable; urgency=medium
+
+  * Initial Debian package for GitHub Pages APT distribution.
+
+ -- David Britto <DavidBritto@users.noreply.github.com>  Sat, 20 Jun 2026 11:00:00 -0300

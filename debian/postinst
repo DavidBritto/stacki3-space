@@ -1,0 +1,10 @@
+#!/bin/sh
+set -e
+
+case "$1" in
+  configure)
+    echo "STACKI3-Space installed. Run 'stacki3-space apply' as your user to update your desktop config."
+    ;;
+esac
+
+#DEBHELPER#
