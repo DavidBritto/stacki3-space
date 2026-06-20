@@ -6,7 +6,7 @@
     <meta name="color-scheme" content="dark">
     <meta
       name="description"
-      content="STACKI3-Space es un escritorio i3/X11 keyboard-first para Linux Mint: terminal, tmux, Rofi, Polybar y temas actualizables por APT."
+          content="STACKI3-Space es un escritorio i3/X11 keyboard-first inspirado en Omarchy, pensado para Linux Mint y equipos sin GPU dedicada."
     >
     <title>STACKI3-Space - i3/X11 keyboard-first para Linux Mint</title>
     <link rel="stylesheet" href="./styles.css">
@@ -28,12 +28,12 @@
     <main id="top">
       <section class="hero section">
         <div class="hero-copy">
-          <p class="eyebrow">Linux Mint · X11 · i3 · tmux</p>
-          <h1>Un escritorio keyboard-first que se actualiza como un paquete más.</h1>
+          <p class="eyebrow">Omarchy-like · Mint-native · sin GPU dedicada</p>
+          <h1>Un stack keyboard-first para equipos reales.</h1>
           <p class="lead">
-            STACKI3-Space empaqueta un flujo real de trabajo: i3 como estructura,
-            tmux como hub, Rofi como superficie de acción y Polybar como estado
-            silencioso. Sin migrar a Wayland. Sin abandonar Mint.
+            STACKI3-Space toma la filosofía Omarchy y la baja a un entorno i3/X11
+            liviano: terminal como centro, menús útiles, estética oscura y cero
+            obligación de tener GPU dedicada, Wayland o hardware nuevo.
           </p>
           <div class="actions">
             <a class="button primary" href="#install">Instalar por APT</a>
@@ -47,6 +47,10 @@
             <div>
               <dt>Sesión</dt>
               <dd>X11 + i3</dd>
+            </div>
+            <div>
+              <dt>Hardware</dt>
+              <dd>sin GPU dedicada</dd>
             </div>
             <div>
               <dt>Update</dt>
@@ -87,11 +91,14 @@ $ stack-theme apply deep-space
 
       <section id="workflow" class="section split">
         <div>
-          <p class="eyebrow">Qué es</p>
-          <h2>No es una colección de dotfiles. Es un recorrido diario.</h2>
+          <p class="eyebrow">Filosofía Omarchy-like</p>
+          <h2>La idea no es copiar Omarchy. Es traer su intención a Mint+i3.</h2>
           <p>
-            La idea es reducir cambios de contexto: abrir, buscar, cambiar tema,
-            revisar estado y volver al trabajo desde una superficie coherente.
+            Omarchy-like significa escritorio con opinión, teclado primero,
+            terminal como base y acciones integradas. STACKI3-Space conserva esa
+            dirección, pero evita exigir Hyprland, Wayland o aceleración gráfica:
+            está pensado para notebooks y PCs modestos que todavía trabajan mejor
+            en X11.
           </p>
         </div>
         <div class="cards">
@@ -104,8 +111,12 @@ $ stack-theme apply deep-space
             <p>`space`, Rofi y overlays TUI exponen acciones reales, no callejones sin salida.</p>
           </article>
           <article class="card">
-            <h3>Ruido bajo</h3>
-            <p>Deep-space, Polybar compacta y Dunst oscuro mantienen el sistema visible pero quieto.</p>
+            <h3>Ligero por diseño</h3>
+            <p>i3, Picom sobrio y Polybar compacta dan una experiencia oscura y fluida sin depender de GPU dedicada.</p>
+          </article>
+          <article class="card">
+            <h3>Neón funcional</h3>
+            <p>Cian, violeta y lima destacan estados y acciones; el fondo queda negro profundo para no competir con el trabajo.</p>
           </article>
         </div>
       </section>
@@ -172,8 +183,8 @@ stacki3-space apply --deps</code></pre>
       </section>
 
       <section class="section final-cta">
-        <p class="eyebrow">Omarchy-like, Mint-native</p>
-        <h2>Para quien quiere un escritorio de trabajo, no una demo de atajos.</h2>
+        <p class="eyebrow">Omarchy-like, hardware-friendly</p>
+        <h2>Para quien quiere un escritorio de trabajo, no una demo pesada de atajos.</h2>
         <div class="actions centered">
           <a class="button primary" href="#install">Instalar</a>
           <a class="button secondary" href="https://github.com/DavidBritto/stacki3-space/blob/main/README.md">Leer README</a>
@@ -183,6 +194,7 @@ stacki3-space apply --deps</code></pre>
 
     <footer class="footer">
       <span>STACKI3-Space</span>
+      <span>Creado por <a href="https://github.com/DavidBritto">David Britto</a></span>
       <a href="https://github.com/DavidBritto/stacki3-space">GitHub</a>
       <a href="https://github.com/DavidBritto/stacki3-space/blob/main/docs/apt-repository.md">APT docs</a>
     </footer>

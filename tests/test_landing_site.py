@@ -13,9 +13,12 @@ class LandingSiteTest(unittest.TestCase):
 
         self.assertIn("STACKI3-Space", html)
         self.assertIn("i3/X11 keyboard-first", html)
+        self.assertIn("Omarchy-like", html)
+        self.assertIn("sin GPU dedicada", html)
         self.assertIn("sudo apt install stacki3-space", html)
         self.assertIn("stacki3-space apply --deps", html)
         self.assertIn("sudo apt update && sudo apt upgrade", html)
+        self.assertIn("https://github.com/DavidBritto", html)
 
     def test_landing_uses_local_css_only(self):
         html = SITE_INDEX.read_text()
@@ -23,6 +26,8 @@ class LandingSiteTest(unittest.TestCase):
 
         self.assertIn('href="./styles.css"', html)
         self.assertIn("--bg:", css)
+        self.assertIn("#010208", css)
+        self.assertIn("--green:", css)
         self.assertNotIn("https://fonts.googleapis.com", html)
 
     def test_pages_workflow_publishes_landing_with_apt_repo(self):
