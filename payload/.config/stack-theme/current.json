@@ -1,0 +1,54 @@
+{
+  "name": "deep-space",
+  "display": "Deep Space / OpenCode Black",
+  "variant": "dark",
+  "colors": {
+    "bg": "#000000",
+    "surface": "#050711",
+    "elevated": "#0b1020",
+    "input": "#02040a",
+    "accent": "#4961da",
+    "accent_hover": "#5b72ff",
+    "accent2": "#7c5cff",
+    "cyan": "#67c9e4",
+    "text": "#b8cdfe",
+    "text_bright": "#d7e0ff",
+    "dim": "#444b6f",
+    "white": "#ffffff",
+    "warning": "#e0af68",
+    "error": "#ff5f87",
+    "success": "#67c9e4"
+  },
+  "terminal": {
+    "palette": [
+      "#000000",
+      "#ff5f87",
+      "#67c9e4",
+      "#e0af68",
+      "#4961da",
+      "#7c5cff",
+      "#67c9e4",
+      "#b8cdfe",
+      "#444b6f",
+      "#ff7aa2",
+      "#75d5f0",
+      "#f0c674",
+      "#5b72ff",
+      "#9d7cff",
+      "#8be9fd",
+      "#ffffff"
+    ]
+  },
+  "gtk": {
+    "theme": "CrewDragon-Y",
+    "icon_theme": "FairyWren_Light",
+    "cursor_theme": "Bibata-Original-Classic"
+  },
+  "font": "Berkeley Mono",
+  "zsh": {
+    "omp_config": "__STACKI3_HOME__/.config/oh-my-posh/themes/catppuccin_json_balanced.editable.omp.json"
+  },
+  "opencode": {
+    "theme": "deep-space"
+  }
+}

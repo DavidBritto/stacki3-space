@@ -1,0 +1,23 @@
+Overlays TUI / scratchpads
+==========================
+
+Abrir:
+- mod+grave -> menú de overlays
+- o -> t    -> overlays desde modo operador
+
+Overlays disponibles:
+- btop           : monitor del sistema (usa btop; si falta, cae a htop/top)
+- lazygit        : Git TUI
+- audio-mixer    : alsamixer
+- network-tui    : nmtui
+- clipboard-view : historial del portapapeles en less
+- quick-notes    : notas rápidas locales
+
+Nota:
+- Yazi forma parte del stack, pero su uso normal es desde terminal/tmux.
+- mail / tasks / calendar no son launchers canónicos del escritorio.
+
+Comportamiento:
+- se abren flotantes
+- van al scratchpad
+- comparten estilo terminal / teclado-first

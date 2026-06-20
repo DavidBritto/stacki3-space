@@ -1,0 +1,142 @@
+#!/usr/bin/env python3
+import json
+import random
+import subprocess
+import sys
+from pathlib import Path
+from PIL import Image
+
+HOME = Path.home()
+WALL_DIR = HOME / 'Imágenes' / 'wallpapers'
+STATE_DIR = HOME / '.config' / 'stack-theme'
+STATE_DIR.mkdir(parents=True, exist_ok=True)
+STATE_FILE = STATE_DIR / 'state.json'
+POLYBAR_FILE = HOME / '.config' / 'polybar' / 'colors-generated.ini'
+ROFI_FILE = HOME / '.config' / 'rofi' / 'generated-colors.rasi'
+DEFAULT_BG = '#131520'
+DEFAULT_SURFACE = '#1b1f32'
+DEFAULT_TEXT = '#b8cdfe'
+
+EXTS = {'.jpg', '.jpeg', '.png', '.webp', '.bmp'}
+
+
+def list_walls():
+    files = [p for p in WALL_DIR.iterdir() if p.is_file() and p.suffix.lower() in EXTS]
+    return sorted(files)
+
+
+def load_state():
+    if STATE_FILE.exists():
+        return json.loads(STATE_FILE.read_text())
+    return {}
+
+
+def save_state(path: Path):
+    STATE_FILE.write_text(json.dumps({'current': str(path)}, indent=2))
+
+
+def clamp(n):
+    return max(0, min(255, int(n)))
+
+
+def rgb_to_hex(rgb):
+    return '#%02x%02x%02x' % tuple(clamp(v) for v in rgb)
+
+
+def adjust(rgb, factor=1.0, lift=0):
+    return tuple(clamp(v * factor + lift) for v in rgb)
+
+
+def score(color):
+    r, g, b = color
+    mx, mn = max(color), min(color)
+    sat = mx - mn
+    lum = 0.2126 * r + 0.7152 * g + 0.0722 * b
+    return sat + abs(lum - 140) * 0.15
+
+
+def extract_colors(path: Path):
+    img = Image.open(path).convert('RGB')
+    img.thumbnail((220, 220))
+    pal = img.quantize(colors=8, method=Image.Quantize.MEDIANCUT).convert('RGB')
+    colors = pal.getcolors(220 * 220) or []
+    ranked = []
+    for _, color in colors:
+        lum = 0.2126 * color[0] + 0.7152 * color[1] + 0.0722 * color[2]
+        sat = max(color) - min(color)
+        if lum < 45 or lum > 230 or sat < 28:
+            continue
+        ranked.append((score(color), color))
+    ranked.sort(reverse=True)
+    primary = ranked[0][1] if ranked else (73, 97, 218)
+    secondary = ranked[1][1] if len(ranked) > 1 else adjust(primary, 1.18, 12)
+    primary = adjust(primary, 1.05, 6)
+    secondary = adjust(secondary, 1.08, 10)
+    return {
+        'primary': rgb_to_hex(primary),
+        'secondary': rgb_to_hex(secondary),
+        'alert': rgb_to_hex(adjust(primary, 1.12, 16)),
+        'accent_soft': rgb_to_hex(adjust(primary, 0.78, -8)),
+    }
+
+
+def write_generated(colors):
+    POLYBAR_FILE.write_text(
+        '[generated]\n'
+        f'primary = {colors["primary"]}\n'
+        f'secondary = {colors["secondary"]}\n'
+        f'alert = {colors["alert"]}\n'
+        f'accent_soft = {colors["accent_soft"]}\n'
+    )
+    def rgba(hex_color, alpha='100%'):
+        h = hex_color.lstrip('#')
+        r, g, b = int(h[0:2], 16), int(h[2:4], 16), int(h[4:6], 16)
+        return f'rgba({r}, {g}, {b}, {alpha})'
+    ROFI_FILE.write_text(
+        '* {\n'
+        f'    accent:         {rgba(colors["accent_soft"])};\n'
+        f'    accent-strong:  {rgba(colors["secondary"])};\n'
+        f'    border-col:     {rgba(colors["primary"])};\n'
+        '}\n'
+    )
+
+
+def apply_wall(path: Path, reload_ui=True):
+    env = dict(__import__('os').environ)
+    env.setdefault('DISPLAY', ':0')
+    subprocess.run(['feh', '--bg-fill', str(path)], check=False, env=env)
+    colors = extract_colors(path)
+    write_generated(colors)
+    save_state(path)
+    if reload_ui:
+        subprocess.run([str(HOME / '.config' / 'polybar' / 'launch.sh')], check=False)
+
+
+def pick(mode: str):
+    walls = list_walls()
+    if not walls:
+        raise SystemExit('No wallpapers found')
+    state = load_state()
+    current = Path(state.get('current', walls[0]))
+    if current not in walls:
+        current = walls[0]
+    idx = walls.index(current)
+    if mode == 'next':
+        return walls[(idx + 1) % len(walls)]
+    if mode == 'prev':
+        return walls[(idx - 1) % len(walls)]
+    if mode == 'random':
+        return random.choice(walls)
+    if mode == 'apply-last':
+        return current
+    return current
+
+
+cmd = sys.argv[1] if len(sys.argv) > 1 else 'apply-last'
+if cmd == 'apply' and len(sys.argv) > 2:
+    apply_wall(Path(sys.argv[2]).expanduser(), reload_ui='--no-reload' not in sys.argv)
+elif cmd in {'next', 'prev', 'random', 'apply-last'}:
+    apply_wall(pick(cmd), reload_ui='--no-reload' not in sys.argv)
+else:
+    print('usage: stack-wall {apply <path>|next|prev|random|apply-last} [--no-reload]')
+    sys.exit(2)

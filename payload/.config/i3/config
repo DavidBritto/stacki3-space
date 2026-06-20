@@ -1,0 +1,229 @@
+# i3 config file (v4)
+# Referencia oficial: https://i3wm.org/docs/userguide.html
+
+set $mod Mod4
+
+# === FUENTES
+# Fuente del WM.
+# Cambia solo este valor si quieres probar otra Nerd Font en titulos y barras de i3.
+font pango:Berkeley Mono 12
+
+# === AUTOSTART
+exec --no-startup-id dex --autostart --environment i3
+exec --no-startup-id xss-lock --transfer-sleep-lock -- ~/.config/i3/lock.sh
+exec --no-startup-id ~/.local/bin/polkit-agent-oceano
+exec_always --no-startup-id ~/.local/bin/stack-wall apply-last --no-reload
+exec_always --no-startup-id ~/.config/i3/spotify_workspace_name.py
+
+# Daemon de portapapeles — arrancar al iniciar i3
+exec --no-startup-id greenclip daemon &
+
+# Scratchpad / overlays: usar clases dedicadas para no depender de timing del título.
+for_window [class="stack-panel"] floating enable, move scratchpad, resize set 1040 640, move position center
+for_window [class="stack-network-panel"] floating enable, move scratchpad, move position center
+for_window [class="stack-calendar-panel"] floating enable, move scratchpad
+for_window [class="stack-context" title="^Help: "] floating enable, resize set 1040 640, move position center
+for_window [title="^TUI: "] floating enable, move scratchpad, resize set 1040 640, move position center
+for_window [title="TUI: clipboard"] floating enable, move scratchpad, resize set 980 620, move position center
+for_window [title="TUI: notes"] floating enable, move scratchpad, resize set 980 620, move position center
+for_window [title="Spotify Mini"] floating enable, resize set 920 420, move position center
+
+# === PALETA SPACE-OPS
+# Fondos en capas oscuras, acento azul electrico y texto azul suave.
+set $bg           #000000
+set $surface      #050711
+set $elevated     #0b1020
+set $accent       #4961da
+set $accent_hover #5b72ff
+set $cyan         #67c9e4
+set $text         #b8cdfe
+set $text_dim     #444b6f
+set $white        #ffffff
+# Bordes minimos y rectos para evitar el marco claro agresivo.
+default_border pixel 2
+default_floating_border pixel 2
+hide_edge_borders smart
+
+client.focused          $accent   $surface  $text     $accent_hover $accent
+client.unfocused        $elevated $bg       $text_dim $elevated     $elevated
+client.focused_inactive $elevated $surface  $text_dim $elevated     $elevated
+client.urgent           $cyan     $bg       $white    $cyan         $cyan
+client.placeholder      $bg       $bg       $text_dim $bg           $bg
+client.background       $bg
+
+# === GAPS (requiere i3-gaps)
+gaps inner 2
+gaps outer 2
+workspace_layout default
+default_orientation auto
+
+# === VOLUMEN
+# Las teclas multimedia deben llegar como XF86Audio* desde Fn+Fx.
+# No bindear F2/F3/F4 pelados: se disparan sin Fn y rompen usos normales.
+bindsym XF86AudioRaiseVolume exec --no-startup-id ~/.config/i3/volume_notify.sh up
+bindsym XF86AudioLowerVolume exec --no-startup-id ~/.config/i3/volume_notify.sh down
+bindsym XF86AudioMute        exec --no-startup-id ~/.config/i3/volume_notify.sh mute
+bindsym XF86AudioMicMute     exec --no-startup-id ~/.config/i3/volume_notify.sh mic
+
+# === SPOTIFY / MEDIA
+bindsym XF86AudioPlay  exec --no-startup-id ~/.config/polybar/scripts/spotify_tui.py play-pause
+bindsym XF86AudioPause exec --no-startup-id ~/.config/polybar/scripts/spotify_tui.py play-pause
+bindsym XF86AudioNext  exec --no-startup-id ~/.config/polybar/scripts/spotify_tui.py next
+bindsym XF86AudioPrev  exec --no-startup-id ~/.config/polybar/scripts/spotify_tui.py previous
+bindsym XF86AudioStop  exec --no-startup-id ~/.config/polybar/scripts/spotify_tui.py stop
+
+# === CAPTURAS DE PANTALLA
+# Impr Pant abre Flameshot y luego restaura el foco previo para que Picom
+# no deje todas las ventanas en estado "inactivo" tras cerrar el overlay.
+bindsym Print exec --no-startup-id ~/.config/i3/flameshot_gui.sh
+
+# === MOUSE
+# Win + arrastrar permite mover flotantes y ajustar splits tiling sin dependencias.
+floating_modifier $mod
+tiling_drag modifier titlebar
+
+# === ATAJOS DE TECLADO
+set $term kitty -- bash -lc 'export STACK_NO_AUTO_TMUX=1; exec ${SHELL:-bash} -l'
+set $term_main kitty --class stack-main-terminal -- bash -lc 'exec tmux new-session -A -s main'
+bindsym $mod+Return exec --no-startup-id $term
+bindsym $mod+Shift+Return workspace number $ws1; exec --no-startup-id $term_main
+bindsym $mod+Shift+q kill
+bindsym $mod+d exec --no-startup-id rofi -show drun
+bindsym $mod+p exec --no-startup-id ~/.local/bin/space search
+bindsym $mod+Shift+p exec --no-startup-id ~/.local/bin/space menu projects
+bindsym $mod+grave exec --no-startup-id ~/.local/bin/space menu panels
+bindsym $mod+b workspace number $ws2; exec --no-startup-id qutebrowser --target window
+bindsym $mod+Shift+x exec --no-startup-id ~/.config/i3/lock.sh
+
+# Keybinding — abrir historial con Rofi
+bindsym $mod+Shift+v exec --no-startup-id ~/.local/bin/space menu clipboard
+
+bindsym $mod+F1 exec --no-startup-id ~/.local/bin/shortcuts-help menu
+
+# === FOCO DE VENTANAS
+bindsym $mod+j focus left
+bindsym $mod+k focus down
+bindsym $mod+l focus up
+bindsym $mod+ntilde focus right
+bindsym $mod+Left  focus left
+bindsym $mod+Down  focus down
+bindsym $mod+Up    focus up
+bindsym $mod+Right focus right
+
+# === MOVER VENTANAS
+bindsym $mod+Shift+j     move left
+bindsym $mod+Shift+k     move down
+bindsym $mod+Shift+l     move up
+bindsym $mod+Shift+ntilde move right
+bindsym $mod+Shift+Left  move left
+bindsym $mod+Shift+Down  move down
+bindsym $mod+Shift+Up    move up
+bindsym $mod+Shift+Right move right
+
+# === DIVISIÓN / LAYOUTS
+bindsym $mod+h split h
+bindsym $mod+v split v
+bindsym $mod+f fullscreen toggle
+bindsym $mod+Shift+f fullscreen disable, floating toggle
+bindsym $mod+e layout toggle split
+
+# === FLOTANTE
+bindsym $mod+space       focus mode_toggle
+bindsym $mod+a focus parent
+
+# === WORKSPACES
+set $ws1 "1:terminal"
+set $ws2 "2:browser"
+set $ws3 "3:code"
+set $ws4 "4"
+set $ws5 "5"
+set $ws6 "6"
+set $ws7 "7"
+set $ws8 "8"
+set $ws9 "9"
+set $ws10 "10"
+
+bindsym $mod+1 workspace number $ws1
+bindsym $mod+2 workspace number $ws2
+bindsym $mod+3 workspace number $ws3
+bindsym $mod+4 workspace number $ws4
+bindsym $mod+5 workspace number $ws5
+bindsym $mod+6 workspace number $ws6
+bindsym $mod+7 workspace number $ws7
+bindsym $mod+8 workspace number $ws8
+bindsym $mod+9 workspace number $ws9
+bindsym $mod+0 workspace number $ws10
+
+bindsym $mod+Shift+1 move container to workspace number $ws1
+bindsym $mod+Shift+2 move container to workspace number $ws2
+bindsym $mod+Shift+3 move container to workspace number $ws3
+bindsym $mod+Shift+4 move container to workspace number $ws4
+bindsym $mod+Shift+5 move container to workspace number $ws5
+bindsym $mod+Shift+6 move container to workspace number $ws6
+bindsym $mod+Shift+7 move container to workspace number $ws7
+bindsym $mod+Shift+8 move container to workspace number $ws8
+bindsym $mod+Shift+9 move container to workspace number $ws9
+bindsym $mod+Shift+0 move container to workspace number $ws10
+
+# === CONTROL DE I3
+bindsym $mod+Shift+c reload
+bindsym $mod+Shift+r restart
+bindsym $mod+Shift+e exec --no-startup-id i3-nagbar -t warning -f "pango:Berkeley Mono 11" -m "STACKI3 · salir de i3" -B "salir" "i3-msg exit" -B "cancelar" "true"
+
+
+
+# === MODO RESIZE
+
+mode "resize" {
+        bindsym j      resize shrink width  10 px or 10 ppt
+        bindsym k      resize grow   height 10 px or 10 ppt
+        bindsym l      resize shrink height 10 px or 10 ppt
+        bindsym ntilde resize grow   width  10 px or 10 ppt
+        bindsym Left   resize shrink width  10 px or 10 ppt
+        bindsym Down   resize grow   height 10 px or 10 ppt
+        bindsym Up     resize shrink height 10 px or 10 ppt
+        bindsym Right  resize grow   width  10 px or 10 ppt
+        bindsym Return  mode "default"
+        bindsym Escape  mode "default"
+        bindsym $mod+r  mode "default"
+}
+bindsym $mod+r mode "resize"
+
+# Resize directo para corregir proporciones sin entrar al modo dedicado.
+bindsym $mod+Ctrl+Left  resize shrink width  10 px or 10 ppt
+bindsym $mod+Ctrl+Right resize grow   width  10 px or 10 ppt
+bindsym $mod+Ctrl+Up    resize shrink height 10 px or 10 ppt
+bindsym $mod+Ctrl+Down  resize grow   height 10 px or 10 ppt
+
+# === MODO OPERADOR
+# Hub de acciones teclado-first para proyectos, paneles, sistema y ayudas.
+mode "operator" {
+        bindsym p exec --no-startup-id ~/.local/bin/space search, mode "default"
+        bindsym j exec --no-startup-id ~/.local/bin/space menu projects, mode "default"
+        bindsym w exec --no-startup-id ~/.local/bin/space menu windows, mode "default"
+        bindsym e exec --no-startup-id ~/.local/bin/space menu workspaces, mode "default"
+        bindsym t exec --no-startup-id ~/.local/bin/space menu panels, mode "default"
+        bindsym a exec --no-startup-id ~/.local/bin/space menu audio, mode "default"
+        bindsym n exec --no-startup-id ~/.local/bin/space menu network, mode "default"
+        bindsym m exec --no-startup-id ~/.local/bin/space menu mounts, mode "default"
+        bindsym c exec --no-startup-id ~/.local/bin/space menu clipboard, mode "default"
+        bindsym s exec --no-startup-id ~/.local/bin/space menu system, mode "default"
+        bindsym h exec --no-startup-id ~/.local/bin/shortcuts-help menu, mode "default"
+        bindsym Return mode "default"
+        bindsym Escape mode "default"
+}
+
+# === ASIGNACIÓN DE APPS A WORKSPACES
+assign [class="^stack-main-terminal$"] $ws1
+assign [class="^qutebrowser$"] $ws2
+assign [class="^Brave-origin-nightly$"] $ws2
+assign [class="^Brave-browser$"] $ws2
+assign [class="^firefox$"] $ws2
+assign [class="^Spotify$"] number 9
+
+# === CICLAR ENTRE SUS WORKSPACES
+bindsym $mod+Tab       workspace next
+bindsym $mod+Shift+Tab workspace prev
+
+# === BARRA DE ESTADO
+exec_always --no-startup-id ~/.config/polybar/launch.sh

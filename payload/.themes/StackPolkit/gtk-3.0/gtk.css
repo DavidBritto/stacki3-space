@@ -1,0 +1,62 @@
+/* STACKI3 Polkit overlay: Dunst-like black/violet/cyan surface. */
+* {
+  background-color: #000000;
+  color: #d7e0ff;
+  border-color: #7c5cff;
+  border-radius: 0;
+  box-shadow: none;
+  text-shadow: none;
+  outline-color: #67c9e4;
+  caret-color: #67c9e4;
+  font-family: "Berkeley Mono", "IBM Plex Mono", monospace;
+  font-size: 11pt;
+}
+
+window,
+dialog,
+.background,
+.csd {
+  background: #000000;
+  border: 1px solid #7c5cff;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+box,
+grid,
+label,
+entry,
+button {
+  background: #000000;
+  color: #d7e0ff;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+entry {
+  border: 1px solid #444b6f;
+  padding: 8px 10px;
+  selection-background-color: #4961da;
+  selection-color: #ffffff;
+}
+
+entry:focus {
+  border-color: #67c9e4;
+}
+
+button {
+  border: 1px solid #7c5cff;
+  padding: 8px 14px;
+  background: #000000;
+  color: #d7e0ff;
+}
+
+button:hover,
+button:focus {
+  border-color: #67c9e4;
+  color: #ffffff;
+}
+
+button:active {
+  background: #0b1020;
+}

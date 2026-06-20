@@ -1,0 +1,22 @@
+Atajos y hubs del escritorio
+===========================
+
+Páginas disponibles:
+- desktop  : i3, workspaces, foco, layouts, capturas
+- panels   : overlays TUI puntuales
+- menus    : palettes y hubs rofi
+- tmux     : multiplexor
+- yazi     : gestor de archivos TUI
+- shell    : zsh, aliases, helpers
+
+Atajos rápidos vigentes:
+- mod+p           palette global
+- mod+'           switcher de ventanas
+- mod+Shift+p     project sessionizer
+- mod+grave       menú de overlays TUI
+- mod+Shift+v     clipboard menu
+- mod+F1          ayuda global
+
+Idea fuerza:
+- el flujo real es terminal + tmux
+- i3 aporta ventanas, menús globales y utilidades puntuales

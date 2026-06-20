@@ -1,0 +1,22 @@
+Palettes y hubs rofi
+====================
+
+mod+p
+- abre la palette global
+- categorías: projects, windows, workspaces, panels, audio, network,
+  mounts, clipboard, system, help
+
+mod+'
+- switcher de ventanas
+
+mod+Shift+p
+- sessionizer de proyectos Git
+- acciones: tmux, lazygit, terminal
+
+mod+Shift+v
+- clipboard menu
+- copiar entrada / limpiar historial
+
+Criterio:
+- los menús globales complementan a tmux
+- no reemplazan el flujo central de terminal

@@ -1,0 +1,38 @@
+YAZI CHEATSHEET
+===============
+
+Ayuda rapida:
+- F1 o ~    abrir ayuda nativa de Yazi
+- H         abrir esta chuleta
+- q         salir y volver
+- Q         salir sin actualizar el cwd
+
+Movimiento:
+- j / k     bajar / subir
+- h / l     ir al padre / entrar
+- Enter     abrir el archivo bajo el cursor, ignorando selecciones viejas
+- g h       ir a HOME
+- g g       ir a ~/git
+- g d       ir a ~/Downloads
+- g c       ir a ~/.config
+
+Seleccion:
+- Space     seleccionar archivo
+- v         modo visual
+- V         invertir seleccion visual
+
+Portapapeles:
+- y         copiar
+- x         cortar
+- p         pegar
+
+Archivos:
+- d         mover a papelera o borrar segun configuracion
+- a         crear archivo o carpeta
+- r         renombrar
+
+Util:
+- /         buscar
+- n / N     siguiente / anterior resultado
+- z h       mostrar ocultos
+- !         abrir shell en el directorio actual

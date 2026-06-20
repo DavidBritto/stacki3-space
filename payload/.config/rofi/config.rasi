@@ -1,0 +1,12 @@
+@theme "oceano"
+
+configuration {
+    modi:               "combi,files:__STACKI3_HOME__/.local/bin/rofi-files,drun,run,window";
+    combi-modi:         "window,drun,run,files";
+    /* Desactiva iconos en la lista de resultados.
+     * Si algun dia quieres recuperarlos, cambia a true. */
+    show-icons:         false;
+    drun-display-format: "{name}";
+    fuzzy:              true;
+    matching:           "fuzzy";
+}

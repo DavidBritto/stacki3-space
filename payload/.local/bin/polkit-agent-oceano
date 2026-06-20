@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+export XDG_CONFIG_HOME="${HOME}/.config/polkit-oceano"
+export GTK_THEME="StackPolkit"
+export XCURSOR_THEME="Bibata-Original-Classic"
+export XCURSOR_SIZE="22"
+
+exec /usr/lib/policykit-1-gnome/polkit-gnome-authentication-agent-1

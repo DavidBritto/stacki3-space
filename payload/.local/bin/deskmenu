@@ -1,0 +1,620 @@
+#!/usr/bin/env python3
+import json
+import os
+import re
+import shutil
+import subprocess
+import sys
+from pathlib import Path
+
+HOME = Path.home()
+ROFI = shutil.which('rofi')
+BACK_LABEL = '← volver'
+BACK_MESSAGE = '<- volver'
+CATEGORY_GLYPHS = {
+    'audio': '󰕾',
+    'bar': '󰓩',
+    'clipboard': '󰅌',
+    'compositor': '󰾆',
+    'files': '󰉋',
+    'help': '󰋖',
+    'mounts': '󰉋',
+    'network': '󰖩',
+    'notify': '󰂚',
+    'notes': '󰓝',
+    'panel': '󰛮',
+    'project': '󰊢',
+    'system': '󰍜',
+    'theme': '󰏘',
+    'wallpaper': '󰸉',
+    'window': '󰍹',
+    'workspace': '󰹑',
+}
+UPDATE_APPS_COMMAND = 'sudo apt update && sudo apt upgrade -y && sudo apt autoremove --purge -y && sudo apt autoclean'
+TERMINAL_CLASSES = {
+    'alacritty',
+    'gnome-terminal',
+    'gnome-terminal-server',
+    'kitty',
+    'st-256color',
+    'terminator',
+    'wezterm',
+    'xterm',
+}
+
+
+def category_label(category, action=None):
+    glyph = CATEGORY_GLYPHS.get(category, '·')
+    if action:
+        return f'{glyph} {category} · {action}'
+    return f'{glyph} {category}'
+
+
+def action_label(category, label):
+    glyph = CATEGORY_GLYPHS.get(category, '·')
+    return f'{glyph} {label}'
+
+
+def run(cmd, **kwargs):
+    return subprocess.run(cmd, text=True, **kwargs)
+
+
+def check_output(cmd):
+    return subprocess.check_output(cmd, text=True)
+
+
+def rofi_select(prompt, options, allow_back=False):
+    opts = [o for o in options if o]
+    if allow_back:
+        opts = [BACK_LABEL] + opts
+    if not opts:
+        return ''
+    if not ROFI:
+        return opts[0]
+    cmd = ['rofi', '-dmenu', '-i', '-p', prompt]
+    if allow_back:
+        cmd += ['-mesg', BACK_MESSAGE]
+    proc = run(cmd, input='\n'.join(opts), capture_output=True)
+    if proc.returncode != 0:
+        return ''
+    choice = proc.stdout.strip()
+    if allow_back and choice == BACK_LABEL:
+        return '__back__'
+    return choice
+
+def notify(body, title='desktop', app='system', urgency='normal', timeout=1800):
+    cmd = ['dunstify', '-a', app, '-u', urgency, '-t', str(timeout), title, body]
+    run(cmd)
+
+
+def i3_cmd(*parts):
+    cmd = ['i3-msg']
+    cmd.extend(parts)
+    run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+
+
+def focused_window_class(node):
+    props = node.get('window_properties') or {}
+    if node.get('focused'):
+        return props.get('class', '')
+    for child in node.get('nodes', []):
+        found = focused_window_class(child)
+        if found:
+            return found
+    for child in node.get('floating_nodes', []):
+        found = focused_window_class(child)
+        if found:
+            return found
+    return ''
+
+
+def active_window_class():
+    try:
+        return focused_window_class(get_i3_tree()).strip().lower()
+    except Exception:
+        return ''
+
+
+def is_terminal_window(window_class):
+    normalized = (window_class or '').strip().lower()
+    return normalized in TERMINAL_CLASSES or 'terminal' in normalized
+
+
+def copy_to_clipboard(text):
+    if shutil.which('xclip'):
+        return run(['xclip', '-selection', 'clipboard'], input=text).returncode == 0
+    if shutil.which('xsel'):
+        return run(['xsel', '-ib'], input=text).returncode == 0
+    return False
+
+
+def confirm_update_apps():
+    if not ROFI:
+        return False
+    choice = rofi_select('Update apps?', ['sí · pegar comando', 'no'], allow_back=True)
+    return choice == 'sí · pegar comando'
+
+
+def paste_update_command():
+    if not confirm_update_apps():
+        return
+    if not shutil.which('xdotool'):
+        notify('xdotool no está instalado: sudo apt install xdotool', title='updates', app='system', urgency='normal', timeout=4000)
+        return
+    window_class = active_window_class()
+    if not is_terminal_window(window_class):
+        notify('Abrí/focuseá una terminal y volvé a intentarlo.', title='updates', app='system', urgency='normal', timeout=3000)
+        return
+    if not copy_to_clipboard(UPDATE_APPS_COMMAND):
+        notify('No encontré xclip/xsel para copiar el comando.', title='updates', app='system', urgency='normal', timeout=3000)
+        return
+    run(['xdotool', 'key', 'ctrl+shift+v'])
+    notify('Comando pegado. Revisalo y presioná Enter si querés ejecutar.', title='updates', app='system', timeout=3500)
+
+
+def get_i3_tree():
+    return json.loads(check_output(['i3-msg', '-t', 'get_tree']))
+
+
+def get_workspaces():
+    return json.loads(check_output(['i3-msg', '-t', 'get_workspaces']))
+
+
+def collect_windows(node, current_ws=None, out=None):
+    if out is None:
+        out = []
+    if node.get('type') == 'workspace':
+        current_ws = node.get('name')
+    props = node.get('window_properties') or {}
+    if node.get('window') and node.get('name'):
+        out.append({
+            'id': node.get('id'),
+            'name': node.get('name'),
+            'workspace': current_ws or '?',
+            'class': props.get('class', ''),
+            'instance': props.get('instance', ''),
+            'focused': node.get('focused', False),
+        })
+    for child in node.get('nodes', []):
+        collect_windows(child, current_ws, out)
+    for child in node.get('floating_nodes', []):
+        collect_windows(child, current_ws, out)
+    return out
+
+
+def slugify(name):
+    slug = re.sub(r'[^a-zA-Z0-9._-]+', '-', name.lower()).strip('-')
+    return slug or 'project'
+
+
+def launch_terminal(command, title=None, cwd=None):
+    cmd = ['gnome-terminal', '--class=stack-context']
+    if title:
+        cmd += ['--title', title]
+    if cwd:
+        cmd += ['--working-directory', str(cwd)]
+    cmd += ['--', 'bash', '-lc', command]
+    subprocess.Popen(cmd)
+
+
+def menu_palette():
+    entries = {
+        category_label('system', 'search'): 'search',
+        category_label('files', 'files'): 'files',
+        category_label('project', 'projects'): 'projects',
+        category_label('window', 'windows'): 'windows',
+        category_label('workspace', 'workspaces'): 'workspaces',
+        category_label('panel', 'panels'): 'panels',
+        category_label('system', 'system'): 'system',
+        category_label('audio', 'audio'): 'audio',
+        category_label('network', 'network'): 'network',
+        category_label('mounts', 'mounts'): 'mounts',
+        category_label('clipboard', 'clipboard'): 'clipboard',
+        category_label('help', 'help'): 'help',
+    }
+    choice = rofi_select('Space', list(entries))
+    dispatch(entries.get(choice, choice))
+
+
+def static_search_actions():
+    return [
+        {'label': category_label('system', 'reload i3'), 'command': ['i3-msg', 'reload']},
+        {'label': category_label('system', 'lock screen'), 'command': [str(HOME / '.config/i3/lock.sh')]},
+        {'label': category_label('system', 'screenshot'), 'command': ['flameshot', 'gui']},
+        {'label': category_label('system', 'power menu'), 'command': [str(HOME / '.config/i3/power_menu.sh')]},
+        {'label': category_label('bar', 'restart polybar'), 'command': [str(HOME / '.config/polybar/launch.sh')]},
+        {'label': category_label('notify', 'restart dunst'), 'command': ['sh', '-lc', 'pkill dunst || true; nohup dunst >/tmp/dunst.log 2>&1 &']},
+        {'label': category_label('compositor', 'restart picom'), 'command': ['sh', '-lc', f'pkill picom || true; nohup picom --config {HOME}/.config/picom/picom.conf >/tmp/picom.log 2>&1 &']},
+        {'label': category_label('theme', 'apply deep-space'), 'command': [str(HOME / '.local/bin/stack-theme'), 'apply', 'deep-space']},
+        {'label': category_label('theme', 'apply space-purple'), 'command': [str(HOME / '.local/bin/stack-theme'), 'apply', 'space-purple']},
+        {'label': category_label('wallpaper', 'next'), 'command': [str(HOME / '.local/bin/stack-wall'), 'next']},
+        {'label': category_label('wallpaper', 'random'), 'command': [str(HOME / '.local/bin/stack-wall'), 'random']},
+        *[
+            {'label': label, 'command': [str(HOME / '.local/bin/tui-panel'), panel]}
+            for label, panel in panel_menu_entries()
+        ],
+        {'label': category_label('audio', 'open mixer panel'), 'command': [str(HOME / '.local/bin/tui-panel'), 'audio-mixer']},
+        {'label': category_label('audio', 'toggle mute'), 'command': [str(HOME / '.config/i3/volume_notify.sh'), 'mute']},
+        {'label': category_label('audio', 'volume up'), 'command': [str(HOME / '.config/i3/volume_notify.sh'), 'up']},
+        {'label': category_label('audio', 'volume down'), 'command': [str(HOME / '.config/i3/volume_notify.sh'), 'down']},
+        {'label': category_label('audio', 'toggle mic mute'), 'command': [str(HOME / '.config/i3/volume_notify.sh'), 'mic']},
+        {'label': category_label('help', 'shortcuts manual'), 'command': [str(HOME / '.local/bin/shortcuts-help'), 'menu']},
+    ]
+
+
+def project_search_actions():
+    actions = []
+    try:
+        repos = iter_git_repos()
+    except Exception:
+        return actions
+    for repo in repos:
+        session = slugify(repo.name)
+        cmd = f'tmux has-session -t {session} 2>/dev/null || tmux new-session -d -s {session} -c {shlex_quote(str(repo))}; exec tmux attach -t {session}'
+        actions.append({
+            'label': category_label('project', f'{repo.name} · tmux'),
+            'command': ['gnome-terminal', '--class=stack-context', '--title', f'Project: {repo.name}', '--working-directory', str(repo), '--', 'bash', '-lc', cmd],
+        })
+    return actions
+
+
+def window_search_actions():
+    actions = []
+    try:
+        windows = collect_windows(get_i3_tree())
+    except Exception:
+        return actions
+    for w in windows:
+        label = category_label('window', f"[{w['workspace']}] {w['class'] or 'app'} · {w['name']}")
+        actions.append({'label': label, 'command': ['i3-msg', 'workspace', w['workspace'], ';', f'[con_id={w["id"]}]', 'focus']})
+    return actions
+
+
+def workspace_search_actions():
+    actions = []
+    try:
+        workspaces = sorted(get_workspaces(), key=lambda x: x.get('num', 999))
+    except Exception:
+        return actions
+    for ws in workspaces:
+        actions.append({'label': category_label('workspace', ws["name"]), 'command': ['i3-msg', 'workspace', ws['name']]})
+    return actions
+
+
+def search_actions():
+    return static_search_actions() + workspace_search_actions() + window_search_actions() + project_search_actions()
+
+
+def run_search_action(action):
+    subprocess.Popen(action['command'])
+
+
+def menu_search():
+    actions = search_actions()
+    mapping = {a['label']: a for a in actions}
+    choice = rofi_select('Space Search', list(mapping), allow_back=True)
+    if choice == '__back__':
+        return menu_palette()
+    if choice in mapping:
+        run_search_action(mapping[choice])
+
+
+def menu_windows():
+    windows = collect_windows(get_i3_tree())
+    choose_window('Windows', windows, allow_back=True)
+
+
+def choose_window(prompt, windows, current_ws=None, allow_back=False):
+    if current_ws is not None:
+        windows = [w for w in windows if w['workspace'] == current_ws]
+    mapping = {}
+    opts = []
+    for w in windows:
+        label = f"{'*' if w['focused'] else ' '} [{w['workspace']}] {w['class'] or 'app'} · {w['name']}"
+        mapping[label] = w
+        opts.append(label)
+    choice = rofi_select(prompt, opts, allow_back=allow_back)
+    if choice == '__back__' and allow_back:
+        return menu_palette()
+    if choice and choice in mapping:
+        w = mapping[choice]
+        i3_cmd('workspace', w['workspace'])
+        i3_cmd(f'[con_id={w["id"]}]', 'focus')
+
+
+def menu_workspaces():
+    workspaces = sorted(get_workspaces(), key=lambda x: x.get('num', 999))
+    mapping = {}
+    opts = []
+    for ws in workspaces:
+        flags = []
+        if ws.get('focused'):
+            flags.append('*')
+        if ws.get('visible') and not ws.get('focused'):
+            flags.append('v')
+        if ws.get('urgent'):
+            flags.append('!')
+        prefix = ''.join(flags) or ' '
+        label = f'{prefix} {ws["name"]}'
+        mapping[label] = ws['name']
+        opts.append(label)
+    choice = rofi_select('Workspaces', opts, allow_back=True)
+    if choice == '__back__':
+        return menu_palette()
+    if choice and choice in mapping:
+        i3_cmd('workspace', mapping[choice])
+
+
+def panel_menu_entries():
+    return [
+        (action_label('files', 'Files · Yazi'), 'files-yazi'),
+        (action_label('system', 'System · Monitor'), 'htop'),
+        (action_label('system', 'Logs · Lazyjournal'), 'lazyjournal'),
+        (action_label('project', 'Git · Lazygit'), 'lazygit'),
+        (action_label('audio', 'Audio · Mixer'), 'audio-mixer'),
+        (action_label('network', 'Network · Nmtui'), 'network-tui'),
+        (action_label('clipboard', 'Clipboard · History'), 'clipboard-view'),
+        (action_label('notes', 'Notes · Quick notes'), 'quick-notes'),
+    ]
+
+
+def menu_panels():
+    entries = dict(panel_menu_entries())
+    choice = rofi_select('Panels', list(entries), allow_back=True)
+    if choice == '__back__':
+        return menu_palette()
+    panel = entries.get(choice)
+    if panel:
+        run([str(HOME / '.local/bin/tui-panel'), panel])
+
+
+def iter_git_repos():
+    roots = [HOME / 'git', HOME / 'projects', HOME / 'code', HOME / 'work', HOME / 'src', HOME]
+    seen = set()
+    repos = []
+    for root in roots:
+        if not root.exists() or not root.is_dir():
+            continue
+        max_depth = 2 if root == HOME else 3
+        for current_root, dirs, files in os.walk(root):
+            path = Path(current_root)
+            depth = len(path.relative_to(root).parts)
+            if '.git' in dirs:
+                repo = str(path)
+                if repo not in seen:
+                    seen.add(repo)
+                    repos.append(path)
+                dirs[:] = []
+                continue
+            dirs[:] = [d for d in dirs if not d.startswith('.')]
+            if depth >= max_depth:
+                dirs[:] = []
+    return sorted(repos, key=lambda p: str(p).lower())
+
+
+def menu_projects():
+    repos = iter_git_repos()
+    if not repos:
+        notify('No encontré repos Git en ~/git, ~/projects, ~/code, ~/work, ~/src.', title='projects')
+        return
+    mapping = {}
+    opts = []
+    for repo in repos:
+        label = repo.name if repo.parent == HOME else f'{repo.name}  ·  {repo.parent}'
+        mapping[label] = repo
+        opts.append(label)
+    choice = rofi_select('Projects', opts, allow_back=True)
+    if choice == '__back__':
+        return menu_palette()
+    if not choice:
+        return
+    repo = mapping[choice]
+    action = rofi_select('Action', ['tmux', 'lazygit', 'terminal'], allow_back=True)
+    if action == '__back__':
+        return menu_projects()
+    if not action:
+        return
+    session = slugify(repo.name)
+    if action == 'tmux':
+        cmd = f'tmux has-session -t {session} 2>/dev/null || tmux new-session -d -s {session} -c {shlex_quote(str(repo))}; exec tmux attach -t {session}'
+        launch_terminal(cmd, title=f'Project: {repo.name}', cwd=repo)
+    elif action == 'lazygit':
+        launch_terminal('exec lazygit', title=f'TUI: lazygit · {repo.name}', cwd=repo)
+    elif action == 'terminal':
+        launch_terminal('exec bash', title=f'Terminal · {repo.name}', cwd=repo)
+
+
+def shlex_quote(s):
+    import shlex
+    return shlex.quote(s)
+
+
+def audio_menu_entries():
+    return [
+        'open mixer panel',
+        'toggle mute',
+        'volume up',
+        'volume down',
+        'toggle mic mute',
+    ]
+
+
+def menu_files():
+    choice = rofi_select('Files', [
+        'yazi',
+        'search files',
+    ], allow_back=True)
+    if choice == '__back__':
+        return menu_palette()
+    if choice == 'yazi':
+        run([str(HOME / '.local/bin/tui-panel'), 'files-yazi'])
+    elif choice == 'search files':
+        run([str(HOME / '.local/bin/rofi-files')])
+
+def menu_audio():
+    choice = rofi_select('Audio', audio_menu_entries(), allow_back=True)
+    if choice == '__back__':
+        return menu_palette()
+    if choice == 'volume up':
+        run([str(HOME / '.config/i3/volume_notify.sh'), 'up'])
+    elif choice == 'volume down':
+        run([str(HOME / '.config/i3/volume_notify.sh'), 'down'])
+    elif choice == 'toggle mute':
+        run([str(HOME / '.config/i3/volume_notify.sh'), 'mute'])
+    elif choice == 'toggle mic mute':
+        run([str(HOME / '.config/i3/volume_notify.sh'), 'mic'])
+    elif choice == 'open mixer panel':
+        run([str(HOME / '.local/bin/tui-panel'), 'audio-mixer'])
+
+
+def wifi_enabled():
+    out = check_output(['nmcli', 'radio', 'wifi']).strip().lower()
+    return out == 'enabled'
+
+
+def menu_network():
+    state = 'enabled' if wifi_enabled() else 'disabled'
+    choice = rofi_select('Network', [
+        f'wifi: {state}',
+        'open nmtui',
+        'show active connections',
+        'rescan wifi',
+    ], allow_back=True)
+    if choice == '__back__':
+        return menu_palette()
+    if not choice:
+        return
+    if choice.startswith('wifi:'):
+        new = 'off' if wifi_enabled() else 'on'
+        run(['nmcli', 'radio', 'wifi', new])
+        notify(f'Wi-Fi {"activado" if new == "on" else "desactivado"}', title='network', app='system')
+    elif choice == 'open nmtui':
+        run([str(HOME / '.local/bin/tui-panel'), 'network-tui'])
+    elif choice == 'show active connections':
+        active = check_output(['nmcli', '-t', '-f', 'NAME,TYPE,DEVICE', 'connection', 'show', '--active']).strip()
+        notify(active or 'Sin conexiones activas', title='network', app='system', timeout=3500)
+    elif choice == 'rescan wifi':
+        run(['nmcli', 'device', 'wifi', 'rescan'])
+        notify('Escaneo Wi-Fi lanzado', title='network', app='system')
+
+
+def menu_mounts():
+    data = json.loads(check_output(['lsblk', '-J', '-o', 'NAME,LABEL,SIZE,MOUNTPOINT,RM,HOTPLUG,TYPE,PATH']))
+    mapping = {}
+    opts = []
+    def walk(devs):
+        for dev in devs:
+            if dev.get('type') == 'part' and (dev.get('rm') or dev.get('hotplug') or dev.get('mountpoint')):
+                mount = dev.get('mountpoint') or 'not-mounted'
+                label = dev.get('label') or dev.get('name')
+                key = f"{label} · {dev.get('size','?')} · {mount}"
+                mapping[key] = dev
+                opts.append(key)
+            walk(dev.get('children', []))
+    walk(data.get('blockdevices', []))
+    choice = rofi_select('Mounts', opts, allow_back=True)
+    if choice == '__back__':
+        return menu_palette()
+    if not choice:
+        return
+    dev = mapping[choice]
+    if dev.get('mountpoint'):
+        action = rofi_select('Action', ['open mount', 'unmount'], allow_back=True)
+        if action == '__back__':
+            return menu_mounts()
+        if action == 'open mount':
+            launch_terminal(f'cd {shlex_quote(dev["mountpoint"])} && exec yazi', title=f'TUI: yazi · {dev.get("label") or dev.get("name")}', cwd=dev['mountpoint'])
+        elif action == 'unmount':
+            run(['udisksctl', 'unmount', '-b', dev['path']])
+            notify(f'Desmontado: {dev["path"]}', title='mounts', app='system')
+    else:
+        run(['udisksctl', 'mount', '-b', dev['path']])
+        notify(f'Montado: {dev["path"]}', title='mounts', app='system')
+
+
+def menu_clipboard():
+    history = run(['greenclip', 'print'], capture_output=True)
+    entries = [line for line in history.stdout.splitlines() if line.strip()]
+    if not entries:
+        notify('Historial de portapapeles vacío', title='clipboard', app='system')
+        return
+    opts = ['[clear history]'] + entries
+    choice = rofi_select('Clipboard', opts, allow_back=True)
+    if choice == '__back__':
+        return menu_palette()
+    if not choice:
+        return
+    if choice == '[clear history]':
+        run(['greenclip', 'clear'])
+        notify('Historial limpiado', title='clipboard', app='system')
+        return
+    xsel = shutil.which('xsel')
+    if xsel:
+        run([xsel, '-ib'], input=choice)
+        notify('Entrada copiada al portapapeles', title='clipboard', app='system')
+
+
+def menu_system():
+    entries = {
+        category_label('system', 'reload i3'): 'reload i3',
+        category_label('bar', 'restart polybar'): 'restart polybar',
+        category_label('notify', 'restart dunst'): 'restart dunst',
+        category_label('compositor', 'restart picom'): 'restart picom',
+        category_label('system', 'lock screen'): 'lock screen',
+        category_label('system', 'screenshot'): 'screenshot',
+        category_label('system', 'power menu'): 'power menu',
+        category_label('system', 'update apps'): 'update apps',
+    }
+    choice = rofi_select('System', list(entries), allow_back=True)
+    if choice == '__back__':
+        return menu_palette()
+    choice = entries.get(choice, choice)
+    if choice == 'reload i3':
+        i3_cmd('reload')
+        notify('i3 recargado', title='system', app='system')
+    elif choice == 'restart polybar':
+        subprocess.Popen([str(HOME / '.config/polybar/launch.sh')])
+        notify('Polybar relanzada', title='system', app='system')
+    elif choice == 'restart dunst':
+        subprocess.Popen(['bash', '-lc', 'pkill dunst || true; nohup dunst >/tmp/dunst.log 2>&1 &'])
+        notify('Dunst reiniciado', title='system', app='system')
+    elif choice == 'restart picom':
+        subprocess.Popen(['bash', '-lc', f'pkill picom || true; nohup picom --config {HOME}/.config/picom/picom.conf >/tmp/picom.log 2>&1 &'])
+        notify('Picom reiniciado', title='system', app='system')
+    elif choice == 'lock screen':
+        subprocess.Popen([str(HOME / '.config/i3/lock.sh')])
+    elif choice == 'screenshot':
+        subprocess.Popen(['flameshot', 'gui'])
+    elif choice == 'power menu':
+        subprocess.Popen([str(HOME / '.config/i3/power_menu.sh')])
+    elif choice == 'update apps':
+        paste_update_command()
+
+
+def menu_help():
+    subprocess.Popen([str(HOME / '.local/bin/shortcuts-help'), 'menu'])
+
+
+def dispatch(name):
+    table = {
+        'palette': menu_palette,
+        'search': menu_search,
+        'windows': menu_windows,
+        'workspaces': menu_workspaces,
+        'panels': menu_panels,
+        'files': menu_files,
+        'projects': menu_projects,
+        'audio': menu_audio,
+        'network': menu_network,
+        'mounts': menu_mounts,
+        'clipboard': menu_clipboard,
+        'system': menu_system,
+        'help': menu_help,
+    }
+    fn = table.get(name)
+    if fn:
+        fn()
+
+
+if __name__ == '__main__':
+    dispatch(sys.argv[1] if len(sys.argv) > 1 else 'palette')

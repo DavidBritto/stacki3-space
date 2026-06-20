@@ -1,0 +1,31 @@
+Guía rápida de paquete offline / scp
+====================================
+
+1. Generar el paquete limpio desde la raíz del repo:
+```bash
+scripts/package.sh
+```
+
+2. Enviar solo el tarball al equipo de prueba:
+```bash
+scp dist/stacki3-package.tar.gz user@target:~/
+```
+
+3. Instalar en el equipo destino:
+```bash
+tar -xzf ~/stacki3-package.tar.gz
+cd ~/stacki3-package
+bash install.sh --deps
+```
+
+4. Si las dependencias ya están instaladas y solo quieres desplegar config:
+```bash
+bash install.sh
+```
+
+Notas
+-----
+- El paquete incluye solo `install.sh`, `README.md`, `stack.md`, `docs/`, `scripts/` y `payload/`.
+- No incluye `.git`, `.atl`, `.engram`, tests, logs ni archivos de trabajo locales.
+- `install.sh` reemplaza `__STACKI3_HOME__` por el `$HOME` real del equipo destino.
+- Regenerar siempre `dist/stacki3-package.tar.gz` antes de moverlo a otro equipo.

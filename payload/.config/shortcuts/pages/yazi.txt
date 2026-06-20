@@ -1,0 +1,60 @@
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                               ATAJOS DE YAZI                               ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+AYUDA
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  shift+h              abrir esta ayuda global de Yazi
+  F1 o ~               abrir ayuda nativa de Yazi
+  q                    salir y volver al shell
+  Q                    salir sin actualizar el cwd
+
+MOVIMIENTO
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  j / k                bajar / subir
+  h / l                ir al padre / entrar
+  g h                  ir a home
+  g g                  ir a ~/git
+  g d                  ir a ~/Downloads
+  g c                  ir a ~/.config
+
+SELECCIÓN
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  espacio              seleccionar archivo
+  v                    modo visual
+  V                    invertir selección visual
+
+PORTAPAPELES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  y                    copiar
+  x                    cortar
+  p                    pegar
+  P                    pegar forzando o sobrescribiendo según la acción
+
+ARCHIVOS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  a                    crear archivo o carpeta
+  r                    renombrar
+  d                    mover a papelera o borrar según configuración
+  D                    borrar permanente si la versión lo soporta
+
+UTILIDAD
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  /                    buscar
+  n / N                siguiente / anterior resultado
+  z h                  mostrar/ocultar ocultos
+  !                    abrir shell en el directorio actual
+  Enter en imágenes    pregunta en qué workspace abrir xviewer
+
+NOTA
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Tu keymap añade estos atajos personalizados:
+  - shift+h            abrir esta guía
+  - g h                home
+  - g g                ~/git
+  - g d                Downloads
+  - g c                ~/.config
+  - !                  shell bloqueante en cwd actual
+  - imágenes           al abrirlas pide workspace por rofi
+
+[q] para salir

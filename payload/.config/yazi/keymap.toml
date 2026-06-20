@@ -1,0 +1,10 @@
+[mgr]
+prepend_keymap = [
+  { on = "<Enter>",  run = "open --hovered",                                   desc = "Open hovered file, ignoring stale selections" },
+  { on = "H",        run = 'shell "~/.local/bin/shortcuts-help yazi" --block', desc = "Open STACKI3 Yazi shortcuts" },
+  { on = ["g", "h"], run = "cd ~",                                               desc = "Go to home" },
+  { on = ["g", "g"], run = "cd ~/git",                                           desc = "Go to git" },
+  { on = ["g", "d"], run = "cd ~/Downloads",                                     desc = "Go to downloads" },
+  { on = ["g", "c"], run = "cd ~/.config",                                       desc = "Go to config" },
+  { on = "!",        run = 'shell "$SHELL" --block',                             desc = "Open shell here" }
+]

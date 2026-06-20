@@ -1,0 +1,335 @@
+#!/usr/bin/env python3
+import json, os, re, shutil, subprocess, sys
+from datetime import datetime
+from pathlib import Path
+
+HOME = Path.home()
+CONFIG = HOME / '.config'
+STATE = Path(os.environ.get('XDG_STATE_HOME', HOME / '.local/state')) / 'stacki3-theme'
+THEMES = CONFIG / 'stack-theme' / 'themes'
+CURRENT = CONFIG / 'stack-theme' / 'current.json'
+BACKUP_MARKER = STATE / 'last-backup'
+
+def repo_payload():
+    override = os.environ.get('STACKI3_REPO_PAYLOAD')
+    candidates = [
+        Path(override) if override else None,
+        HOME / 'git/space-stack/payload',
+        HOME / 'git/stacki3/payload',
+        HOME / 'space-stack/payload',
+        HOME / 'stacki3/payload',
+    ]
+    for candidate in candidates:
+        if candidate and candidate.exists():
+            return candidate
+    return Path(override) if override else candidates[1]
+
+REPO_PAYLOAD = repo_payload()
+
+LIVE_PATHS = [
+    '.config/i3', '.config/polybar', '.config/rofi', '.config/dunst', '.config/picom',
+    '.config/gtk-3.0', '.config/gtk-4.0', '.config/oh-my-posh', '.config/opencode',
+    '.config/stack-theme', '.tmux.conf', '.zshrc'
+]
+
+COLOR_KEYS = ['bg','surface','elevated','input','accent','accent_hover','accent2','cyan','text','text_bright','dim','white','warning','error','success']
+
+def sh(cmd, check=False):
+    return subprocess.run(cmd, check=check, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+def log(msg):
+    print(f'[stack-theme] {msg}')
+
+def read_theme(name):
+    path = THEMES / f'{name}.json'
+    if not path.exists():
+        raise SystemExit(f'theme not found: {name}')
+    return json.loads(path.read_text())
+
+def colors(theme):
+    c = theme['colors']
+    return {k: c[k] for k in COLOR_KEYS if k in c}
+
+def backup():
+    stamp = datetime.now().strftime('%Y%m%d-%H%M%S')
+    base = STATE / 'backups' / stamp
+    files = base / 'files'
+    dconf = base / 'dconf'
+    files.mkdir(parents=True, exist_ok=True)
+    dconf.mkdir(parents=True, exist_ok=True)
+    for rel in LIVE_PATHS:
+        src = HOME / rel
+        if src.exists() or src.is_symlink():
+            dst = files / rel
+            dst.parent.mkdir(parents=True, exist_ok=True)
+            if src.is_dir():
+                shutil.copytree(src, dst, symlinks=True)
+            else:
+                shutil.copy2(src, dst)
+    if shutil.which('dconf'):
+        out = sh(['dconf','dump','/org/gnome/terminal/'])
+        (dconf / 'gnome-terminal.dconf').write_text(out.stdout)
+    STATE.mkdir(parents=True, exist_ok=True)
+    BACKUP_MARKER.write_text(str(base)+'\n')
+    log(f'backup created: {base}')
+
+def write_generated(theme):
+    c=colors(theme)
+    (CONFIG/'polybar').mkdir(parents=True, exist_ok=True)
+    (CONFIG/'rofi').mkdir(parents=True, exist_ok=True)
+    (CONFIG/'stack-theme').mkdir(parents=True, exist_ok=True)
+    (CONFIG/'polybar/colors-generated.ini').write_text(
+        '[generated]\n'
+        f'primary = {c["accent"]}\nsecondary = {c["accent2"]}\nalert = {c["error"]}\naccent_soft = {c["elevated"]}\n'
+    )
+    def rgba(h, a='100%'):
+        h=h.lstrip('#'); return f'rgba({int(h[0:2],16)}, {int(h[2:4],16)}, {int(h[4:6],16)}, {a})'
+    (CONFIG/'rofi/generated-colors.rasi').write_text(
+        '* {\n'
+        f'    bg:             {rgba(c["bg"], "98%")};\n'
+        f'    bg-selected:    {rgba(c["elevated"])};\n'
+        f'    bg-input:       {rgba(c["input"])};\n'
+        f'    fg:             {rgba(c["text_bright"])};\n'
+        f'    fg-muted:       {rgba(c["dim"], "92%")};\n'
+        f'    accent:         {rgba(c["accent"])};\n'
+        f'    accent-strong:  {rgba(c["cyan"])};\n'
+        f'    border-col:     {rgba(c["accent2"])};\n'
+        '}\n'
+    )
+    env='\n'.join([f'{k.upper()}={v}' for k,v in c.items()])+'\n'
+    (CONFIG/'stack-theme/theme.env').write_text(env)
+    CURRENT.write_text(json.dumps(theme, indent=2)+'\n')
+
+def apply_i3(theme):
+    c=colors(theme); p=CONFIG/'i3/config'
+    if not p.exists(): return
+    repl = {'bg': c['bg'], 'surface': c['surface'], 'elevated': c['elevated'], 'accent': c['accent'], 'accent_hover': c['accent_hover'], 'cyan': c['cyan'], 'text': c['text'], 'text_dim': c['dim'], 'white': c['white']}
+    txt=p.read_text()
+    for key,val in repl.items():
+        txt=re.sub(rf'^set \${key}\s+#[0-9A-Fa-f]{{6}}\s*$', f'set ${key:<12} {val}', txt, flags=re.MULTILINE)
+    p.write_text(txt)
+    lock=CONFIG/'i3/lock.sh'
+    if lock.exists():
+        txt=lock.read_text()
+        for key,val in {'bg':c['bg'],'surface':c['surface'],'elevated':c['elevated'],'accent':c['accent'],'cyan':c['cyan'],'text':c['text'],'text_dim':c['dim']}.items():
+            txt=re.sub(rf'^{key}="#[0-9A-Fa-f]{{6}}"', f'{key}="{val}"', txt, flags=re.MULTILINE)
+        lock.write_text(txt)
+
+def apply_polybar(theme):
+    c=colors(theme); p=CONFIG/'polybar/config.ini'
+    if not p.exists(): return
+    txt=p.read_text()
+    for key,val in {'background':c['bg'], 'background-alt':c['surface'], 'elevated':c['elevated'], 'foreground':c['text'], 'disabled':c['dim'], 'white':c['white']}.items():
+        txt=re.sub(rf'^{re.escape(key)} = #[0-9A-Fa-f]{{6}}$', f'{key} = {val}', txt, flags=re.MULTILINE)
+    p.write_text(txt)
+    for script in [CONFIG/'polybar/scripts/network_status.sh']:
+        if script.exists():
+            txt=script.read_text()
+            txt=re.sub(r'accent="#[0-9A-Fa-f]{6}"', f'accent="{c["cyan"]}"', txt)
+            txt=re.sub(r'dim="#[0-9A-Fa-f]{6}"', f'dim="{c["dim"]}"', txt)
+            txt=re.sub(r'%\{F#[0-9A-Fa-f]{6}\}', f'%{{F{c["white"]}}}', txt)
+            script.write_text(txt)
+    sp=CONFIG/'polybar/scripts/spotify_tui.py'
+    if sp.exists():
+        txt=sp.read_text()
+        txt=re.sub(r'\\033\]10;#[0-9A-Fa-f]{6}\\007\\033\]11;#[0-9A-Fa-f]{6}\\007\\033\]12;#[0-9A-Fa-f]{6}\\007', f'\\033]10;{c["text"]}\\007\\033]11;{c["bg"]}\\007\\033]12;{c["cyan"]}\\007', txt)
+        sp.write_text(txt)
+
+def apply_rofi(theme):
+    p=CONFIG/'rofi/oceano.rasi'
+    if not p.exists(): return
+    txt=p.read_text()
+    txt=re.sub(r'font:\s+"[^"]+";', f'font:               "{theme.get("font","Berkeley Mono")} 11";', txt)
+    p.write_text(txt)
+
+def apply_dunst(theme):
+    c=colors(theme); p=CONFIG/'dunst/dunstrc'
+    if not p.exists(): return
+    txt=p.read_text()
+    txt=re.sub(r'background = "#[0-9A-Fa-f]{6}"', f'background = "{c["bg"]}"', txt)
+    txt=re.sub(r'foreground = "#[0-9A-Fa-f]{6}"', f'foreground = "{c["text_bright"]}"', txt)
+    txt=re.sub(r'frame_color = "#[0-9A-Fa-f]{6}"', f'frame_color = "{c["accent2"]}"', txt)
+    txt=re.sub(r'highlight = "#[0-9A-Fa-f]{6}"', f'highlight = "{c["cyan"]}"', txt)
+    p.write_text(txt)
+
+def apply_picom(theme):
+    p=CONFIG/'picom/picom.conf'
+    if p.exists():
+        txt=p.read_text()
+        txt=re.sub(r'(#?\s*)shadow\s*=\s*true;', r'\1shadow = false;', txt)
+        txt=re.sub(r'(#?\s*)corner-radius\s*=\s*\d+;', r'\1corner-radius = 0;', txt)
+        p.write_text(txt)
+
+def replace_tmux_option(txt, option, value):
+    return re.sub(rf'^{re.escape(option)}\s+.*$', f'{option} "{value}"', txt, flags=re.MULTILINE)
+
+def apply_tmux(theme):
+    c=colors(theme); p=HOME/'.tmux.conf'
+    if not p.exists(): return
+    txt=p.read_text()
+    txt=re.sub(r'^set -g status-style .*$', f'set -g status-style "bg={c["bg"]},fg={c["text"]}"', txt, flags=re.MULTILINE)
+    txt=re.sub(r'^set -g status-left-length .*$', 'set -g status-left-length 60', txt, flags=re.MULTILINE)
+    txt=re.sub(r'^set -g status-right-length .*$', 'set -g status-right-length 120', txt, flags=re.MULTILINE)
+    txt=replace_tmux_option(txt, 'set -g status-left', f'#[bg=#{{?client_prefix,{c["cyan"]},{c["accent2"]}}},fg={c["bg"]},bold] #{{?client_prefix,PREFIX, sesions}} #S #[bg={c["elevated"]},fg=#{{?pane_in_mode,{c["cyan"]},{c["accent2"]}}}]#[bg={c["elevated"]},fg={c["text"]}]#{{?pane_in_mode, COPY,}} ')
+    txt=replace_tmux_option(txt, 'set -g status-right', f'#[bg={c["elevated"]},fg={c["text"]}] #(~/.local/bin/tmux-net-health) #[bg={c["elevated"]},fg={c["dim"]}]| #[fg={c["text"]}]#H #[bg={c["accent"]},fg={c["bg"]},bold] %H:%M ')
+    txt=replace_tmux_option(txt, 'setw -g window-status-format', f'#[bg={c["surface"]},fg={c["dim"]}] #I #W ')
+    txt=re.sub(r'^setw -g window-status-style .*$', f'setw -g window-status-style "bg={c["surface"]},fg={c["dim"]}"', txt, flags=re.MULTILINE)
+    txt=replace_tmux_option(txt, 'setw -g window-status-current-format', f'#[bg={c["elevated"]},fg={c["accent2"]},bold] #I #[fg={c["text"]},bold]#W ')
+    txt=re.sub(r'^setw -g window-status-current-style .*$', f'setw -g window-status-current-style "bg={c["elevated"]},fg={c["text"]},bold"', txt, flags=re.MULTILINE)
+    txt=re.sub(r'^set -g pane-border-style .*$', f'set -g pane-border-style "fg={c["elevated"]}"', txt, flags=re.MULTILINE)
+    txt=re.sub(r'^set -g pane-active-border-style .*$', f'set -g pane-active-border-style "fg={c["accent"]}"', txt, flags=re.MULTILINE)
+    txt=re.sub(r'^set -g message-style .*$', f'set -g message-style "bg={c["accent"]},fg={c["bg"]},bold"', txt, flags=re.MULTILINE)
+    txt=re.sub(r'^set -g message-command-style .*$', f'set -g message-command-style "bg={c["elevated"]},fg={c["text"]}"', txt, flags=re.MULTILINE)
+    txt=re.sub(r'^setw -g mode-style .*$', f'setw -g mode-style "bg={c["accent"]},fg={c["bg"]}"', txt, flags=re.MULTILINE)
+    txt=re.sub(r'^setw -g window-status-activity-style .*$', f'setw -g window-status-activity-style "fg={c["cyan"]},bold"', txt, flags=re.MULTILINE)
+    p.write_text(txt)
+
+def apply_zsh_omp(theme):
+    z=HOME/'.zshrc'
+    if not z.exists(): return
+    target = theme.get('zsh', {}).get('omp_config')
+    if not target:
+        target = str(CONFIG/'oh-my-posh/themes/catppuccin_json_balanced.editable.omp.json')
+    txt=z.read_text()
+    if 'export COLORTERM=' not in txt:
+        txt += '\n# STACKI3 truecolor theme support\nexport COLORTERM=truecolor\n'
+    txt=re.sub(r'eval "\$\(oh-my-posh init zsh --config [^)]+\)"', f'eval "$(oh-my-posh init zsh --config {target})"', txt)
+    z.write_text(txt)
+
+def apply_gtk(theme):
+    gtk=theme.get('gtk',{})
+    for rel in ['gtk-3.0/settings.ini','gtk-4.0/settings.ini','polkit-oceano/gtk-3.0/settings.ini']:
+        p=CONFIG/rel
+        if not p.exists(): continue
+        txt=p.read_text()
+        txt=re.sub(r'gtk-application-prefer-dark-theme=.*','gtk-application-prefer-dark-theme=true',txt)
+        txt=re.sub(r'gtk-theme-name=.*',f'gtk-theme-name={gtk.get("theme","CrewDragon-Y")}',txt)
+        txt=re.sub(r'gtk-icon-theme-name=.*',f'gtk-icon-theme-name={gtk.get("icon_theme","FairyWren_Light")}',txt)
+        txt=re.sub(r'gtk-cursor-theme-name=.*',f'gtk-cursor-theme-name={gtk.get("cursor_theme","Bibata-Original-Classic")}',txt)
+        p.write_text(txt)
+    xs=CONFIG/'xsettingsd/xsettingsd.conf'
+    if xs.exists():
+        txt=xs.read_text()
+        txt=re.sub(r'^Net/ThemeName .*', f'Net/ThemeName "{gtk.get("theme","CrewDragon-Y")}"', txt, flags=re.MULTILINE)
+        txt=re.sub(r'^Net/IconThemeName .*', f'Net/IconThemeName "{gtk.get("icon_theme","FairyWren_Light")}"', txt, flags=re.MULTILINE)
+        xs.write_text(txt)
+
+def opencode_theme_payload(theme):
+    c=colors(theme); val=lambda x:{'dark':x,'light':x}
+    return {'$schema':'https://opencode.ai/theme.json','defs':c,'theme':{
+      'primary':val(c['accent']),'secondary':val(c['accent2']),'accent':val(c['cyan']),
+      'error':val(c['error']),'warning':val(c['warning']),'success':val(c['success']),'info':val(c['cyan']),
+      'text':val(c['text_bright']),'textMuted':val(c['dim']),'background':val(c['bg']),
+      'backgroundPanel':val(c['surface']),'backgroundElement':val(c['elevated']),
+      'border':val(c['elevated']),'borderActive':val(c['accent2']),'borderSubtle':val(c['surface']),
+      'diffAdded':val(c['success']),'diffRemoved':val(c['error']),'diffContext':val(c['dim']),'diffHunkHeader':val(c['accent']),
+      'diffHighlightAdded':val(c['success']),'diffHighlightRemoved':val(c['error']),'diffAddedBg':val(c['surface']),'diffRemovedBg':val(c['surface']),'diffContextBg':val(c['bg']),
+      'diffLineNumber':val(c['dim']),'diffAddedLineNumberBg':val(c['surface']),'diffRemovedLineNumberBg':val(c['surface']),
+      'markdownText':val(c['text']),'markdownHeading':val(c['cyan']),'markdownLink':val(c['accent']),'markdownLinkText':val(c['accent2']),'markdownCode':val(c['success']),
+      'markdownBlockQuote':val(c['dim']),'markdownEmph':val(c['warning']),'markdownStrong':val(c['cyan']),'markdownHorizontalRule':val(c['elevated']),'markdownListItem':val(c['cyan']),'markdownListEnumeration':val(c['accent2']),
+      'markdownImage':val(c['accent']),'markdownImageText':val(c['accent2']),'markdownCodeBlock':val(c['text']),
+      'syntaxComment':val(c['dim']),'syntaxKeyword':val(c['accent2']),'syntaxFunction':val(c['cyan']),'syntaxVariable':val(c['text']),'syntaxString':val(c['success']),'syntaxNumber':val(c['warning']),'syntaxType':val(c['accent']),'syntaxOperator':val(c['accent2']),'syntaxPunctuation':val(c['text'])
+    }}
+
+def apply_opencode(theme):
+    name=theme['name']; d=CONFIG/'opencode/themes'; d.mkdir(parents=True, exist_ok=True)
+    (d/f'{name}.json').write_text(json.dumps(opencode_theme_payload(theme), indent=2)+'\n')
+    tui=CONFIG/'opencode/tui.json'
+    data={}
+    if tui.exists():
+        try: data=json.loads(tui.read_text())
+        except Exception: data={}
+    data.setdefault('$schema','https://opencode.ai/tui.json')
+    data['theme']=name
+    tui.write_text(json.dumps(data, indent=2)+'\n')
+
+def apply_gnome_terminal(theme):
+    c=colors(theme)
+    default=sh(['gsettings','get','org.gnome.Terminal.ProfilesList','default']).stdout.strip().strip("'")
+    if not default: return
+    schema=f'org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:{default}/'
+    palette="[" + ", ".join([repr(x) for x in theme.get('terminal',{}).get('palette',[])]) + "]"
+    for key,val in [('use-theme-colors','false'),('use-transparent-background','false'),('background-color',c['bg']),('foreground-color',c['text']),('palette',palette),('cursor-colors-set','true'),('cursor-background-color',c['cyan']),('cursor-foreground-color',c['bg'])]:
+        r=sh(['gsettings','set',schema,key,val])
+        if r.returncode != 0:
+            log(f'gnome-terminal skipped {key}: {r.stderr.strip()}')
+
+def reload_ui():
+    cmds=[
+      ['i3-msg','reload'],
+      [str(CONFIG/'polybar/launch.sh')],
+      ['sh','-lc','pkill dunst || true; DISPLAY=${DISPLAY:-:0} XDG_RUNTIME_DIR=${XDG_RUNTIME_DIR:-/run/user/$(id -u)} DBUS_SESSION_BUS_ADDRESS=${DBUS_SESSION_BUS_ADDRESS:-unix:path=/run/user/1000/bus} setsid -f dunst >/tmp/dunst.log 2>&1'],
+      ['sh','-lc','if command -v xsettingsd >/dev/null 2>&1; then pkill xsettingsd || true; setsid -f xsettingsd >/tmp/xsettingsd.log 2>&1; fi; nemo -q 2>/dev/null || true'],
+      ['tmux','source-file',str(HOME/'.tmux.conf')]
+    ]
+    for cmd in cmds:
+        if shutil.which(cmd[0]) or cmd[0].endswith('launch.sh') or cmd[0]=='sh':
+            sh(cmd)
+
+def sync_repo():
+    if not REPO_PAYLOAD.exists(): return
+    for rel in ['.config/stack-theme','.config/i3','.config/polybar','.config/rofi','.config/dunst','.config/picom','.config/gtk-3.0','.config/gtk-4.0','.config/oh-my-posh','.local/bin/stack-theme','.tmux.conf','.zshrc']:
+        src=HOME/rel; dst=REPO_PAYLOAD/rel
+        if not src.exists(): continue
+        if dst.exists():
+            if dst.is_dir(): shutil.rmtree(dst)
+            else: dst.unlink()
+        dst.parent.mkdir(parents=True, exist_ok=True)
+        if src.is_dir(): shutil.copytree(src,dst,symlinks=True)
+        else: shutil.copy2(src,dst)
+    for rel in ['.config/opencode/tui.json', '.config/opencode/themes']:
+        src=HOME/rel; dst=REPO_PAYLOAD/rel
+        if not src.exists(): continue
+        if dst.exists():
+            if dst.is_dir(): shutil.rmtree(dst)
+            else: dst.unlink()
+        dst.parent.mkdir(parents=True, exist_ok=True)
+        if src.is_dir(): shutil.copytree(src,dst,symlinks=True)
+        else: shutil.copy2(src,dst)
+    state_file = REPO_PAYLOAD / '.config/stack-theme/state.json'
+    if state_file.exists(): state_file.unlink()
+    pycache = REPO_PAYLOAD / '.local/bin/__pycache__'
+    if pycache.exists(): shutil.rmtree(pycache)
+
+def restore_last():
+    if not BACKUP_MARKER.exists(): raise SystemExit('no backup marker found')
+    base=Path(BACKUP_MARKER.read_text().strip())/'files'
+    if not base.exists(): raise SystemExit('backup files not found')
+    for item in base.iterdir():
+        dst=HOME/item.name
+        if item.is_dir():
+            for child in item.rglob('*'):
+                if child.is_file():
+                    rel=child.relative_to(base)
+                    out=HOME/rel; out.parent.mkdir(parents=True, exist_ok=True); shutil.copy2(child,out)
+        else:
+            shutil.copy2(item,dst)
+    log('restored files from last backup')
+
+def list_themes():
+    for p in sorted(THEMES.glob('*.json')):
+        try:
+            data=json.loads(p.read_text())
+            print(f'{p.stem}\t{data.get("display", p.stem)}')
+        except Exception:
+            print(p.stem)
+
+def main():
+    cmd=sys.argv[1] if len(sys.argv)>1 else 'help'
+    if cmd=='backup': backup(); return
+    if cmd=='list': list_themes(); return
+    if cmd=='current':
+        print(json.loads(CURRENT.read_text()).get('name') if CURRENT.exists() else 'none'); return
+    if cmd=='restore-last': restore_last(); reload_ui(); return
+    if cmd=='apply':
+        name=sys.argv[2] if len(sys.argv)>2 else 'deep-space'
+        theme=read_theme(name)
+        if '--no-backup' not in sys.argv: backup()
+        write_generated(theme); apply_i3(theme); apply_polybar(theme); apply_rofi(theme); apply_dunst(theme); apply_picom(theme); apply_tmux(theme); apply_zsh_omp(theme); apply_gtk(theme); apply_opencode(theme); apply_gnome_terminal(theme)
+        if '--sync-repo' in sys.argv: sync_repo()
+        if '--no-reload' not in sys.argv: reload_ui()
+        log(f'applied theme: {name}')
+        return
+    print('usage: stack-theme {backup|list|current|apply <name> [--no-backup] [--no-reload] [--sync-repo]|restore-last}')
+    raise SystemExit(2)
+if __name__=='__main__': main()

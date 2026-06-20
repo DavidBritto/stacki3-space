@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+set -u
+
+section() {
+  printf "\n== %s ==\n" "$1"
+}
+
+printf "tmux net debug — %s\n" "$(date '+%F %T %Z')"
+
+section "IP"
+hostname -I 2>/dev/null || true
+
+section "Route to 1.1.1.1"
+ip route get 1.1.1.1 2>/dev/null || echo "sin ruta"
+
+section "DNS google.com"
+getent ahostsv4 google.com 2>/dev/null || echo "falló resolución DNS"
+
+section "TCP 443 google.com"
+if nc -zw2 google.com 443 >/dev/null 2>&1; then
+  echo "tcp/443 OK"
+else
+  echo "tcp/443 FAIL"
+fi
+
+section "ICMP 8.8.8.8"
+ping -c2 -W1 8.8.8.8 2>/dev/null || echo "ping FAIL"
+
+section "HTTPS HEAD google.com"
+curl -I --max-time 3 -s https://www.google.com | sed -n '1,5p' || echo "https FAIL"
+
+printf "\n[q]/Ctrl+C para salir\n"

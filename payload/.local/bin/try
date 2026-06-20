@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+base="$HOME/Work/tries"
+stamp="$(date +%Y-%m-%d)"
+name="${1:-experiment}"
+slug="$(printf '%s' "$name" | tr '[:upper:]' '[:lower:]' | sed -E 's/[^a-z0-9._-]+/-/g; s/^-+|-+$//g')"
+dir="$base/$stamp-${slug:-experiment}"
+
+mkdir -p "$dir"
+cd "$dir"
+
+printf 'try: %s\n' "$dir"
+exec ${SHELL:-bash}

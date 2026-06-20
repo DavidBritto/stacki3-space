@@ -1,0 +1,62 @@
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                               ATAJOS DE TMUX                               ║
+║                               Prefix = ctrl+t                              ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+AYUDA Y CONTROL
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  F1                   abrir/cerrar esta ayuda
+  ctrl+t luego r       recargar config
+  ctrl+t luego :       línea de comandos de tmux
+  ctrl+t luego ?       lista completa de atajos de tmux
+  ctrl+t luego N       popup de diagnóstico rápido de red
+
+SESIONES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  ctrl+t luego d       detach: salir sin cerrar la sesión
+  ctrl+t luego $       renombrar sesión
+  ctrl+t luego Q       cerrar sesión actual con confirmación
+  ctrl+t luego (       sesión anterior
+  ctrl+t luego )       sesión siguiente
+  tmux ls              listar sesiones desde shell
+  tmux attach -t X     entrar a la sesión X
+
+VENTANAS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  ctrl+t luego c       nueva ventana
+  ctrl+t luego ,       renombrar ventana
+  ctrl+t luego w       listar/elegir ventana
+  ctrl+t luego Space   choose-tree popup (sesiones/ventanas/panes)
+  ctrl+t luego x       cerrar ventana actual con confirmación
+  alt+1..9             ir directo a ventana 1..9
+  alt+flecha derecha   ventana siguiente
+  alt+flecha izquierda ventana anterior
+
+PANES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  ctrl+t luego |       split lado a lado
+  ctrl+t luego -       split arriba/abajo
+  ctrl+t luego h       foco a la izquierda
+  ctrl+t luego j       foco abajo
+  ctrl+t luego k       foco arriba
+  ctrl+t luego l       foco derecha
+  ctrl+t luego shift+h agrandar pane hacia la izquierda
+  ctrl+t luego shift+j agrandar pane hacia abajo
+  ctrl+t luego shift+k agrandar pane hacia arriba
+  ctrl+t luego shift+l agrandar pane hacia la derecha
+
+COPY MODE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  ctrl+t luego Enter   entrar a copy-mode
+  v                    empezar selección
+  y                    copiar y salir
+  Esc                  cancelar
+  ctrl+t luego ]       pegar buffer
+
+AUTO-INICIO
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Al abrir Gnome Terminal:
+  - si no estás en tmux, zsh intenta entrar a la sesión "main"
+  - si no existe, la crea
+
+[q] para salir

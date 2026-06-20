@@ -1,0 +1,80 @@
+* {
+    bg:         #0d0f1e;
+    bg-sel:     #3a5fcd;
+    fg:         #e0e0e0;
+    fg-sel:     #ffffff;
+    border-col: #3a5fcd;
+
+    background-color:   @bg;
+    text-color:         @fg;
+    font:               "monospace 11";
+}
+
+window {
+    width:            420px;
+    border:           1px;
+    border-color:     @border-col;
+    border-radius:    8px;
+    padding:          8px;
+    background-color: @bg;
+}
+
+mainbox {
+    spacing:    0;
+    padding:    4px;
+}
+
+inputbar {
+    padding:    6px 10px;
+    spacing:    8px;
+    background-color: @bg;
+    border-radius: 4px;
+    children:   [ prompt, entry ];
+}
+
+prompt {
+    text-color: @border-col;
+}
+
+entry {
+    text-color: @fg;
+    placeholder-color: #555577;
+    placeholder: "Buscar...";
+}
+
+listview {
+    lines:      8;
+    padding:    4px 0;
+    spacing:    2px;
+    scrollbar:  false;
+}
+
+element {
+    padding:        6px 10px;
+    border-radius:  4px;
+    spacing:        8px;
+    children:       [ element-icon, element-text ];
+}
+
+element-icon {
+    size: 22px;
+}
+
+element-text {
+    vertical-align: 0.5;
+}
+
+element normal.normal {
+    background-color: @bg;
+    text-color:       @fg;
+}
+
+element selected.normal {
+    background-color: @bg-sel;
+    text-color:       @fg-sel;
+}
+
+element alternate.normal {
+    background-color: @bg;
+    text-color:       @fg;
+}

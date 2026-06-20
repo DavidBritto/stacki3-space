@@ -1,0 +1,82 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+BASE_DIR="$HOME/.config/shortcuts/pages"
+SECTION="${1:-menu}"
+
+page_file() {
+  case "${1:-index}" in
+    menu|index) echo "$BASE_DIR/index.txt" ;;
+    desktop)    echo "$BASE_DIR/desktop.txt" ;;
+    tmux)       echo "$BASE_DIR/tmux.txt" ;;
+    yazi)       echo "$BASE_DIR/yazi.txt" ;;
+    shell)      echo "$BASE_DIR/shell.txt" ;;
+    operator)   echo "$BASE_DIR/operator.txt" ;;
+    panels)     echo "$BASE_DIR/panels.txt" ;;
+    menus)      echo "$BASE_DIR/menus.txt" ;;
+    *)          return 1 ;;
+  esac
+}
+
+open_in_pager() {
+  local file="$1"
+  local title="Help: ${file##*/}"
+  title="${title%.txt}"
+
+  if [ -t 1 ]; then
+    exec less -R "$file"
+  fi
+
+  exec gnome-terminal --class=stack-context --title="$title" -- bash -lc "less -R '$file'"
+}
+
+search_pages() {
+  local query choice file
+  query="${2:-}"
+
+  if [ -z "$query" ] && command -v rofi >/dev/null 2>&1; then
+    query="$(printf '' | rofi -dmenu -p 'Buscar atajo' -mesg 'Escribe palabra clave: i3, tmux, audio, panel, operador...')"
+  fi
+
+  [ -n "${query:-}" ] || exit 0
+
+  choice="$({
+    rg -n --no-heading --color=never "$query" "$BASE_DIR" 2>/dev/null || true
+  } | rofi -dmenu -i -p 'Resultados')"
+
+  [ -n "${choice:-}" ] || exit 0
+  file="${choice%%:*}"
+  open_in_pager "$file"
+}
+
+if [ "$SECTION" = "menu" ]; then
+  if command -v rofi >/dev/null 2>&1; then
+    choice="$({
+      printf '%s\n' \
+        'index' \
+        'desktop' \
+        'operator' \
+        'panels' \
+        'menus' \
+        'tmux' \
+        'yazi' \
+        'shell' \
+        'search'
+    } | rofi -dmenu -i -p 'Atajos')"
+
+    [ -n "${choice:-}" ] || exit 0
+    if [ "$choice" = "search" ]; then
+      exec "$0" search
+    fi
+    exec "$0" "$choice"
+  else
+    SECTION="index"
+  fi
+fi
+
+if [ "$SECTION" = "search" ]; then
+  search_pages "$@"
+fi
+
+FILE="$(page_file "$SECTION")"
+open_in_pager "$FILE"

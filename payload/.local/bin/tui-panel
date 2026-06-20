@@ -1,0 +1,100 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+panel="${1:-}"
+[ -n "$panel" ] || exit 1
+
+panel_width=1040
+panel_height=640
+window_class="stack-panel"
+
+if ! command -v kitty >/dev/null 2>&1; then
+  exit 0
+fi
+
+case "$panel" in
+  htop|btop)
+    title="TUI: htop"
+    cmd="if command -v htop >/dev/null 2>&1; then exec htop; else exec top; fi"
+    ;;
+  lazygit)
+    title="TUI: lazygit"
+    cmd="if command -v lazygit >/dev/null 2>&1; then exec lazygit; else printf 'lazygit no esta instalado en PATH\\n'; printf 'Presiona una tecla para abrir una shell en este repo...'; IFS= read -rsn1 _; export STACK_NO_AUTO_TMUX=1; exec \${SHELL:-bash} -l; fi"
+    ;;
+  lazyjournal|logs)
+    title="TUI: logs · lazyjournal"
+    cmd="if command -v lazyjournal >/dev/null 2>&1; then exec lazyjournal; else printf 'lazyjournal no esta instalado en PATH\\n'; printf 'Ejecuta scripts/install-lazyjournal.sh desde el repo STACKI3.\\n'; printf 'Presiona una tecla para abrir una shell...'; IFS= read -rsn1 _; export STACK_NO_AUTO_TMUX=1; exec \${SHELL:-bash} -l; fi"
+    ;;
+  audio-mixer)
+    title="TUI: audio"
+    cmd="exec alsamixer"
+    ;;
+  files-yazi)
+    title="TUI: files · yazi"
+    panel_width=1180
+    panel_height=720
+    window_class="stack-files-panel"
+    cmd="cd \"\${STACK_FILES_DIR:-$HOME}\"; if command -v yazi >/dev/null 2>&1; then exec yazi .; else printf 'yazi no esta instalado en PATH\n'; printf 'Presiona una tecla para abrir shell...'; IFS= read -rsn1 _; exec \${SHELL:-bash} -l; fi"
+    ;;
+  network-tui)
+    title="TUI: network"
+    panel_width=520
+    panel_height=330
+    window_class="stack-network-panel"
+    cmd="export STACK_NO_AUTO_TMUX=1 TERM=xterm-256color; export NEWT_COLORS='root=white,black;border=blue,black;window=white,black;shadow=black,black;title=magenta,black;button=black,blue;actbutton=black,magenta;entry=white,black;label=white,black;compactbutton=white,black;checkbox=blue,black;actcheckbox=black,blue'; exec nmtui"
+    ;;
+  clipboard-view)
+    title="TUI: clipboard"
+    cmd="greenclip print | less -R"
+    ;;
+  quick-notes)
+    title="TUI: notes"
+    cmd="mkdir -p ~/.local/state/desk && if command -v nano >/dev/null 2>&1; then exec nano ~/.local/state/desk/quick-notes.txt; else exec \${EDITOR:-vi} ~/.local/state/desk/quick-notes.txt; fi"
+    ;;
+  *)
+    exit 1
+    ;;
+esac
+
+if i3-msg -t get_tree | python3 -c 'import json, sys; want = sys.argv[1]; tree = json.load(sys.stdin); stack=[tree]; found=False
+while stack:
+    node=stack.pop()
+    if node.get("name") == want:
+        found=True
+        break
+    stack.extend(node.get("nodes", [])); stack.extend(node.get("floating_nodes", []))
+print("yes" if found else "no")' "$title" | grep -qx yes; then
+  exec i3-msg "[title=\"$title\"] scratchpad show, resize set $panel_width $panel_height, move position center, focus" >/dev/null 2>&1
+else
+  kitty --class "$window_class" --title "$title" \
+    --override scrollback_lines=0 \
+    --override remember_window_size=no \
+    --override window_padding_width=4 \
+    --override background=#000000 \
+    --override foreground=#b8cdfe \
+    --override cursor=#67c9e4 \
+    --override cursor_text_color=#000000 \
+    --override selection_background=#4961da \
+    --override selection_foreground=#ffffff \
+    --override color0=#000000 \
+    --override color1=#7c5cff \
+    --override color2=#67c9e4 \
+    --override color3=#f0c674 \
+    --override color4=#4961da \
+    --override color5=#7c5cff \
+    --override color6=#67c9e4 \
+    --override color7=#b8cdfe \
+    --override color8=#444b6f \
+    --override color9=#9d7cff \
+    --override color10=#8be9fd \
+    --override color11=#f0c674 \
+    --override color12=#5b72ff \
+    --override color13=#9d7cff \
+    --override color14=#67c9e4 \
+    --override color15=#ffffff \
+    --working-directory "$HOME" \
+    bash --noprofile --norc -c "export STACK_NO_AUTO_TMUX=1; $cmd; rc=\$?; if [ \$rc -ne 0 ]; then printf '\n[panel error] exit=%s\n' \"\$rc\"; printf 'Presiona una tecla para cerrar...'; IFS= read -rsn1 _; fi; exit \$rc">/tmp/stacki3-tui-panel.log 2>&1 &
+  sleep 0.4
+  i3-msg "[title=\"$title\"] floating enable, resize set $panel_width $panel_height, move scratchpad, scratchpad show, move position center, focus" >/dev/null 2>&1 || true
+  exit 0
+fi

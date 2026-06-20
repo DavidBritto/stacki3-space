@@ -1,0 +1,10 @@
+* {
+    bg:             rgba(0, 0, 0, 98%);
+    bg-selected:    rgba(11, 16, 32, 100%);
+    bg-input:       rgba(2, 4, 10, 100%);
+    fg:             rgba(215, 224, 255, 100%);
+    fg-muted:       rgba(68, 75, 111, 92%);
+    accent:         rgba(73, 97, 218, 100%);
+    accent-strong:  rgba(103, 201, 228, 100%);
+    border-col:     rgba(124, 92, 255, 100%);
+}

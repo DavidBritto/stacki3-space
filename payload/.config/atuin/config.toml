@@ -1,0 +1,26 @@
+# STACKI3 lean Atuin profile.
+# Keep useful command recall, but avoid noisy DB growth and background indexing.
+
+auto_sync = false
+update_check = false
+search_mode = "fuzzy"
+enter_accept = true
+store_failed = false
+secrets_filter = true
+
+history_filter = [
+  "^\\s*(ls|ll|la|l|lsa|lt|lta|pwd|clear|exit|history)\\s*\\z",
+  "^\\s*(cd|z|zi)(\\s+[^\\n;&|]+)?\\s*\\z",
+  "^\\s*(alias|unalias)\\b",
+  "^\\s*(atuin|tmux (new-session|attach|new|ls))\\b",
+]
+
+[daemon]
+enabled = false
+autostart = false
+
+[sync]
+records = false
+
+[ai]
+enabled = false

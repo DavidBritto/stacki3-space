@@ -1,0 +1,9 @@
+Modo operador
+=============
+
+Este modo fue retirado para simplificar el stack.
+
+Usa:
+- `mod+p` para la palette global
+- `mod+Shift+p` para proyectos
+- `mod+grave` para paneles TUI

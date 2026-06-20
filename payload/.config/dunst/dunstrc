@@ -1,0 +1,83 @@
+[global]
+    monitor = 0
+    follow = mouse
+    width = 360
+    height = 140
+    origin = top-center
+    offset = 0x28
+    scale = 0
+    notification_limit = 6
+    progress_bar = true
+    progress_bar_height = 8
+    progress_bar_frame_width = 1
+    progress_bar_corner_radius = 0
+    progress_bar_min_width = 120
+    progress_bar_max_width = 260
+    corner_radius = 0
+    padding = 14
+    horizontal_padding = 14
+    text_icon_padding = 12
+    separator_height = 0
+    frame_width = 1
+    gap_size = 10
+    transparency = 0
+    font = Berkeley Mono 11
+    line_height = 2
+    markup = full
+    format = "<b>%s</b>\n%b"
+    alignment = left
+    vertical_alignment = center
+    icon_position = left
+    min_icon_size = 24
+    max_icon_size = 40
+    show_indicators = yes
+    word_wrap = yes
+    ellipsize = middle
+    mouse_left_click = do_action, close_current
+    mouse_middle_click = close_current
+    mouse_right_click = close_all
+
+[urgency_low]
+    background = "#000000"
+    foreground = "#d7e0ff"
+    frame_color = "#7c5cff"
+    highlight = "#67c9e4"
+    timeout = 4
+
+[urgency_normal]
+    background = "#000000"
+    foreground = "#d7e0ff"
+    frame_color = "#7c5cff"
+    highlight = "#67c9e4"
+    timeout = 6
+
+[urgency_critical]
+    background = "#000000"
+    foreground = "#d7e0ff"
+    frame_color = "#7c5cff"
+    highlight = "#67c9e4"
+    timeout = 0
+
+[volume]
+    appname = "volume"
+    format = "%b"
+    alignment = center
+    word_wrap = no
+
+[power]
+    appname = "power"
+    format = "%b"
+    alignment = center
+    word_wrap = yes
+
+[system]
+    appname = "system"
+    format = "%b"
+    alignment = center
+    word_wrap = yes
+
+[launcher]
+    appname = "launcher"
+    format = "%b"
+    alignment = center
+    word_wrap = yes

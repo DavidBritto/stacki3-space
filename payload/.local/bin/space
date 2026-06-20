@@ -1,0 +1,129 @@
+#!/usr/bin/env python3
+import os
+import shlex
+import subprocess
+import sys
+from pathlib import Path
+
+HOME = Path.home()
+
+
+def bin_path(name: str) -> str:
+    return str(HOME / ".local/bin" / name)
+
+
+def config_path(*parts: str) -> str:
+    return str(HOME / ".config" / Path(*parts))
+
+
+def build_command(args: list[str]) -> list[str]:
+    if not args or args[0] in {"help", "-h", "--help"}:
+        return []
+
+    area = args[0]
+    rest = args[1:]
+
+    if area == "menu":
+        return [bin_path("deskmenu"), rest[0] if rest else "palette"]
+
+    if area == "search":
+        return [bin_path("deskmenu"), "search"]
+
+    if area == "files":
+        return [bin_path("tui-panel"), "files-yazi"]
+
+    if area == "theme":
+        if not rest:
+            rest = ["current"]
+        return [bin_path("stack-theme"), *rest]
+
+    if area == "wall":
+        if not rest:
+            rest = ["apply-last"]
+        return [bin_path("stack-wall"), *rest]
+
+    if area == "bar" and rest == ["restart"]:
+        return [config_path("polybar", "launch.sh")]
+
+    if area == "system" and rest == ["reload"]:
+        return ["i3-msg", "reload"]
+
+    if area == "backup":
+        return [bin_path("stack-theme"), "backup"]
+
+    if area == "doctor":
+        return [sys.executable, __file__, "_doctor"]
+
+    if area == "_doctor":
+        return []
+
+    raise SystemExit(f"unknown space command: {' '.join(args)}")
+
+
+def doctor() -> int:
+    checks = [
+        ("i3", "i3"),
+        ("polybar", "polybar"),
+        ("rofi", "rofi"),
+        ("dunst", "dunst"),
+        ("picom", "picom"),
+        ("deskmenu", bin_path("deskmenu")),
+        ("stack-theme", bin_path("stack-theme")),
+        ("stack-wall", bin_path("stack-wall")),
+    ]
+    failed = 0
+    for label, command in checks:
+        ok = Path(command).exists() if command.startswith("/") else shutil_which(command)
+        print(f"{label:12} {'ok' if ok else 'missing'}")
+        failed += 0 if ok else 1
+    return 1 if failed else 0
+
+
+def shutil_which(command: str) -> bool:
+    from shutil import which
+
+    return which(command) is not None
+
+
+def print_help() -> None:
+    print(
+        """space — central command surface for the STACKI3 desktop
+
+usage:
+  space menu [palette|projects|windows|workspaces|panels|audio|network|mounts|clipboard|system|help]
+  space search
+  space files
+  space theme {list|current|apply <name>|restore-last}
+  space wall {next|prev|random|apply-last|apply <path>}
+  space bar restart
+  space system reload
+  space backup
+  space doctor
+"""
+    )
+
+
+def main(argv: list[str]) -> int:
+    dry_run = False
+    args = argv[:]
+    if args and args[0] == "--dry-run":
+        dry_run = True
+        args = args[1:]
+
+    if args == ["_doctor"]:
+        return doctor()
+
+    command = build_command(args)
+    if not command:
+        print_help()
+        return 0
+
+    if dry_run:
+        print(" ".join(shlex.quote(part) for part in command))
+        return 0
+
+    return subprocess.call(command)
+
+
+if __name__ == "__main__":
+    raise SystemExit(main(sys.argv[1:]))

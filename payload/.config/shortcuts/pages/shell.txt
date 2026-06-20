@@ -1,0 +1,105 @@
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                           SHELL, ZSH Y ALIASES                             ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+EDICIÓN DE LÍNEA
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  ctrl+r               buscar en historial
+  ctrl+a               ir al inicio de línea
+  ctrl+e               ir al final de línea
+  ctrl+w               borrar palabra anterior
+  ctrl+u               borrar línea completa
+  tab                  autocompletar
+
+NAVEGACIÓN
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  ..                   subir un nivel
+  ...                  subir dos niveles
+  ....                 subir tres niveles
+  ~                    ir a home
+  -                    volver al directorio anterior
+  y                    abrir Yazi y volver al cwd elegido al salir
+
+ALIASES MODERNOS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  ls                   eza --icons          (si eza existe)
+  ll                   eza -lah --icons     o ls -lhF
+  lt                   eza --tree --icons   o ls por fecha
+  cat                  batcat               (si existe)
+  du                   dua                  (si existe)
+  ps                   procs                (si existe)
+  lg                   lazygit
+  ld                   lazydocker
+
+GIT
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  gs                   git status
+  ga / gaa             git add / git add -A
+  gc / gca             git commit -m / amend
+  gp / gpl / gf        push / pull / fetch
+  gd / gds             diff / diff staged
+  gl / gll             logs resumidos
+  gco / gcb            checkout / checkout -b
+  gb / gba / gbd       branches
+  gst / gstp           stash / stash pop
+  grb / gm             rebase / merge
+
+DOCKER
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  dk                   docker
+  dc                   docker compose
+  dcu / dcd            compose up -d / down
+  dcl / dcr            logs -f / restart
+  dkps / dkpsa         ps / ps -a
+  dki                  images
+  dkex                 exec -it
+  dklog                logs -f
+  dkprune              prune
+
+TERRAFORM
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  tf                   terraform
+  tfi / tfp            init / plan
+  tfa / tfaa           apply / auto-approve
+  tfd / tfda           destroy / auto-approve
+  tfo / tfs            output / state
+  tfv / tff            validate / fmt
+
+NODE / PNPM / YARN
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  ni / nr / nrd        npm install / run / dev
+  nrb / nrt / nrl      build / test / lint
+  nx                   npx
+  pi / pr / prd        pnpm install / run / dev
+  prb / px             pnpm build / dlx
+  yi / ya / yr         yarn install / add / run
+
+KUBERNETES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  k                    kubectl
+  kgp / kgpa           get pods / all namespaces
+  kgs / kgd / kgn      services / deployments / nodes
+  kga / kgaa           get all / all namespaces
+  kl / klf / klp       logs / follow / previous
+  kex                  exec -it
+  ka / kak             apply -f / apply -k
+  kdel / kdelp         delete / delete pod
+  kns / kctx / kcc     namespace / context / current context
+  kpf                  port-forward
+
+UTILIDAD
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  cls                  clear
+  h                    history
+  hs texto             history | grep texto
+  reload               recargar ~/.zshrc
+  aliases              ver ~/.zsh_aliases
+  zshconf              editar ~/.zshrc
+
+NOTA
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Prefix de tmux = ctrl+t.
+  Si estás dentro de tmux y quieres mandar ctrl+t al programa interno:
+  usa ctrl+t y luego ctrl+t.
+
+[q] para salir

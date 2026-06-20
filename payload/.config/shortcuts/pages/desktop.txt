@@ -1,0 +1,92 @@
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                              ATAJOS DE ESCRITORIO                          ║
+║                              Sesión real: i3 sobre X11                     ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+LANZAMIENTO Y AYUDA
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  win+Enter            abrir terminal sin auto-tmux
+  win+d                abrir Rofi
+  win+p                abrir palette global
+  win+F1               abrir manual global de atajos
+  win+Shift+v          historial del portapapeles con Greenclip + Rofi
+  win+b                abrir qutebrowser
+  win+Shift+x          bloquear sesión
+
+VENTANAS Y FOCO
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  win+j                foco izquierda
+  win+k                foco abajo
+  win+l                foco arriba
+  win+ñ                foco derecha
+  win+flechas          foco con flechas
+  win+arrastrar        ajustar splits tiling desde el borde/titulo
+
+MOVER VENTANAS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  win+shift+j          mover ventana a la izquierda
+  win+shift+k          mover ventana hacia abajo
+  win+shift+l          mover ventana hacia arriba
+  win+shift+ñ          mover ventana a la derecha
+  win+shift+flechas    mover con flechas
+
+LAYOUT Y ORGANIZACIÓN
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  win+h                dividir horizontal
+  win+v                dividir vertical
+  win+f                pantalla completa
+  win+e                alternar split
+  win+shift+f          salir de fullscreen y conmutar flotante
+  nuevas ventanas      se abren en mosaico (mitad/mitad según contexto)
+  win+space            alternar foco tiling/flotante
+  win+a                foco al contenedor padre
+
+WORKSPACES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  win+1..4             workspaces 1 a 4
+  win+5..0             workspaces 5 a 10
+  win+shift+1..0       mover ventana al workspace correspondiente
+  win+tab              workspace siguiente
+  win+shift+tab        workspace anterior
+
+ANCLAS Y CONTEXTO
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  win+enter            terminal en el workspace actual
+  win+shift+enter      terminal principal con tmux en workspace terminal
+  resto de apps        abren en el workspace actual
+
+CONTROL DE I3
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  win+r                entrar al modo resize
+  win+shift+c          recargar config de i3
+  win+shift+r          reiniciar i3
+  win+shift+e          salir de i3
+  win+shift+q          cerrar ventana
+
+MODO RESIZE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  win+r                entrar
+  j / k / l / ñ        redimensionar
+  flechas              redimensionar
+  win+ctrl+flechas     redimensionar directo sin entrar al modo
+  Enter / Esc          salir del modo resize
+
+VOLUMEN Y MEDIA
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  tecla volumen +      subir volumen
+  tecla volumen -      bajar volumen
+  tecla mute           mutear audio
+  tecla mute mic       mutear micrófono
+  tecla play/pause     play/pause Spotify
+  tecla next           siguiente pista
+  tecla prev           pista anterior
+  tecla stop           detener reproducción
+
+FLUJO REAL DE USO
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  win+Enter            abrir terminal
+  tmux                 centro real de trabajo
+  yazi                 se usa desde shell/tmux cuando hace falta
+  zathura archivo.pdf  abrir PDFs con el visor real del stack
+
+[q] para salir

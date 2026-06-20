@@ -1,0 +1,60 @@
+# STACKI3 Yazi theme: quiet, flat, no status pills.
+
+[mgr]
+cwd = { fg = "#7c5cff", bg = "#000000", bold = true }
+hovered = { fg = "#ffffff", bg = "#0b1020" }
+preview_hovered = { fg = "#ffffff", bg = "#0b1020" }
+find_keyword = { fg = "#67c9e4", bg = "#000000", bold = true }
+find_position = { fg = "#7c5cff", bg = "#000000" }
+marker_copied = { fg = "#67c9e4", bg = "#000000" }
+marker_cut = { fg = "#7c5cff", bg = "#000000" }
+marker_marked = { fg = "#4961da", bg = "#000000" }
+marker_selected = { fg = "#67c9e4", bg = "#000000" }
+count_copied = { fg = "#67c9e4", bg = "#000000" }
+count_cut = { fg = "#7c5cff", bg = "#000000" }
+count_selected = { fg = "#67c9e4", bg = "#000000" }
+border_symbol = "│"
+border_style = { fg = "#444b6f", bg = "#000000" }
+
+[tabs]
+active = { fg = "#d7e0ff", bg = "#000000", bold = true }
+inactive = { fg = "#444b6f", bg = "#000000" }
+sep_inner = { open = "", close = "" }
+sep_outer = { open = "", close = "" }
+
+[mode]
+normal_main = { fg = "#444b6f", bg = "#000000", bold = false }
+normal_alt  = { fg = "#444b6f", bg = "#000000", bold = false }
+select_main = { fg = "#67c9e4", bg = "#000000", bold = false }
+select_alt  = { fg = "#67c9e4", bg = "#000000", bold = false }
+unset_main  = { fg = "#7c5cff", bg = "#000000", bold = false }
+unset_alt   = { fg = "#7c5cff", bg = "#000000", bold = false }
+
+[status]
+overall = { fg = "#444b6f", bg = "#000000" }
+sep_left = { open = "", close = "" }
+sep_right = { open = "", close = "" }
+perm_type = { fg = "#444b6f", bg = "#000000" }
+perm_read = { fg = "#444b6f", bg = "#000000" }
+perm_write = { fg = "#444b6f", bg = "#000000" }
+perm_exec = { fg = "#444b6f", bg = "#000000" }
+perm_sep = { fg = "#22283a", bg = "#000000" }
+progress_label = { fg = "#444b6f", bg = "#000000" }
+progress_normal = { fg = "#444b6f", bg = "#000000" }
+progress_error = { fg = "#7c5cff", bg = "#000000" }
+
+[which]
+cols = 3
+mask = { bg = "#000000" }
+cand = { fg = "#67c9e4", bg = "#000000" }
+rest = { fg = "#d7e0ff", bg = "#000000" }
+desc = { fg = "#444b6f", bg = "#000000" }
+separator = " · "
+separator_style = { fg = "#444b6f", bg = "#000000" }
+
+[help]
+on = { fg = "#67c9e4", bg = "#000000" }
+run = { fg = "#d7e0ff", bg = "#000000" }
+desc = { fg = "#444b6f", bg = "#000000" }
+hovered = { fg = "#ffffff", bg = "#0b1020" }
+footer = { fg = "#7c5cff", bg = "#000000" }

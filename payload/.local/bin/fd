@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if command -v fdfind >/dev/null 2>&1; then
+  exec fdfind "$@"
+fi
+
+printf 'fd wrapper: missing dependency. Install it with: sudo apt install fd-find\n' >&2
+exit 127

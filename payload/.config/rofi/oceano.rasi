@@ -1,0 +1,87 @@
+* {
+    bg:             rgba(16, 19, 26, 96%);
+    bg-selected:    rgba(27, 31, 50, 100%);
+    bg-input:       rgba(11, 15, 20, 100%);
+    fg:             rgba(215, 224, 255, 100%);
+    fg-muted:       rgba(100, 110, 145, 92%);
+    accent:         rgba(74, 90, 122, 100%);
+    accent-strong:  rgba(103, 201, 228, 100%);
+    border-col:     rgba(74, 90, 122, 100%);
+
+    background-color:   transparent;
+    text-color:         @fg;
+    font:               "Berkeley Mono 11";
+}
+
+window {
+    background-color:   @bg;
+    border:             1px solid;
+    border-color:       @border-col;
+    border-radius:      0px;
+    width:              540px;
+    padding:            0px;
+}
+
+mainbox {
+    background-color:   transparent;
+    padding:            8px;
+    spacing:            6px;
+}
+
+inputbar {
+    background-color:   @bg-input;
+    border:             0px 0px 1px 0px;
+    border-color:       @border-col;
+    border-radius:      0px;
+    padding:            8px 10px;
+    spacing:            8px;
+    children:           [ prompt, entry ];
+}
+
+prompt {
+    background-color:   transparent;
+    text-color:         @accent-strong;
+    font:               "Berkeley Mono 11";
+}
+
+entry {
+    background-color:   transparent;
+    text-color:         @fg;
+    placeholder:        "";
+    placeholder-color:  @fg-muted;
+}
+
+listview {
+    background-color:   transparent;
+    padding:            4px 0px;
+    spacing:            0px;
+    lines:              11;
+    scrollbar:          false;
+    border:             0px;
+}
+
+element {
+    background-color:   transparent;
+    padding:            7px 10px;
+    border:             0px;
+    border-radius:      0px;
+    spacing:            0px;
+    children:           [ element-text ];
+}
+
+element normal.normal {
+    background-color:   transparent;
+    text-color:         @fg;
+}
+
+element selected.normal {
+    background-color:   @bg-selected;
+    text-color:         @fg;
+}
+
+element-text {
+    background-color:   transparent;
+    text-color:         inherit;
+}
+
+@import "~/.config/rofi/generated-colors.rasi"

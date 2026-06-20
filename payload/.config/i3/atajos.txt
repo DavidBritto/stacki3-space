@@ -1,0 +1,23 @@
+MANUAL GLOBAL DE ATAJOS
+=======================
+
+win+F1 abre el selector global de páginas.
+
+Páginas disponibles:
+- desktop
+- tmux
+- yazi
+- shell
+
+Atajos TUI rápidos:
+- win+b            → qutebrowser
+- win+g            → panel lazygit
+- win+m            → panel aerc
+- win+y            → panel yazi
+- win+t            → panel tasks
+- win+c            → panel calcurse / calendario
+- win+shift+v      → historial del portapapeles
+
+Ayudas contextuales:
+- F1 en tmux       → página tmux
+- shift+h en yazi  → página yazi

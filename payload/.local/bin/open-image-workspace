@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+file="${1:-}"
+[ -n "$file" ] || exit 1
+
+if ! command -v xviewer >/dev/null 2>&1; then
+  exec xdg-open "$file"
+fi
+
+if ! command -v i3-msg >/dev/null 2>&1 || ! command -v jq >/dev/null 2>&1; then
+  exec xviewer --new-instance "$file"
+fi
+
+current_ws="$(
+  i3-msg -t get_workspaces \
+    | jq -r '.[] | select(.focused) | (.num // .name)' \
+    | head -n1
+)"
+current_ws="${current_ws:-1}"
+
+pick_workspace() {
+  local options choice
+
+  options="$(
+    printf 'actual (%s)\n' "$current_ws"
+    seq 1 10
+  )"
+
+  if command -v rofi >/dev/null 2>&1; then
+    choice="$(printf '%s\n' "$options" | rofi -dmenu -i -p 'Abrir imagen en workspace')"
+  else
+    choice="actual ($current_ws)"
+  fi
+
+  case "${choice:-}" in
+    "") return 1 ;;
+    actual*) printf '%s\n' "$current_ws" ;;
+    *) printf '%s\n' "${choice%% *}" ;;
+  esac
+}
+
+target_ws="$(pick_workspace)" || exit 0
+
+i3-msg "workspace number $target_ws" >/dev/null
+exec xviewer --new-instance "$file"
