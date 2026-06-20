@@ -17,7 +17,10 @@ class LandingSiteTest(unittest.TestCase):
         self.assertIn("sin GPU dedicada", html)
         self.assertIn("sudo apt install stacki3-space", html)
         self.assertIn("stacki3-space apply --deps", html)
-        self.assertIn("sudo apt update && sudo apt upgrade", html)
+        self.assertIn("View repo", html)
+        self.assertIn('href="#install"', html)
+        self.assertIn("copy-button", html)
+        self.assertIn("final-cta", html)
         self.assertIn("https://github.com/DavidBritto", html)
 
     def test_landing_uses_local_css_only(self):
