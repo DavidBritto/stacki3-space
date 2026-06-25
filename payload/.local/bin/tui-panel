@@ -50,6 +50,13 @@ case "$panel" in
     window_class="stack-network-panel"
     cmd="export STACK_NO_AUTO_TMUX=1 TERM=xterm-256color; export NEWT_COLORS='root=white,black;border=blue,black;window=white,black;shadow=black,black;title=magenta,black;button=black,blue;actbutton=black,magenta;entry=white,black;label=white,black;compactbutton=white,black;checkbox=blue,black;actcheckbox=black,blue'; if command -v nmtui-connect >/dev/null 2>&1; then exec nmtui-connect; else exec nmtui connect; fi"
     ;;
+  bluetooth-tui)
+    title="TUI: bluetooth"
+    panel_width=720
+    panel_height=520
+    window_class="stack-bluetooth-panel"
+    cmd="exec $HOME/.config/polybar/scripts/bluetooth_tui.sh"
+    ;;
   clipboard-view)
     title="TUI: clipboard"
     cmd="greenclip print | less -R"

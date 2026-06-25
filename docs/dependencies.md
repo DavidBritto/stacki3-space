@@ -54,7 +54,7 @@ sudo apt install \
 
 ```bash
 sudo apt install \
-  alsa-utils network-manager imagemagick curl netcat-openbsd playerctl
+  alsa-utils network-manager bluez imagemagick curl netcat-openbsd playerctl
 ```
 
 ## Why these packages matter
@@ -70,6 +70,7 @@ sudo apt install \
 - `dex` — XDG autostart loader
 - `flameshot` — screenshots
 - `network-manager` — provides `nmcli` and `nmtui`
+- `bluez` — provides `bluetoothctl` for the Polybar Bluetooth module and TUI panel
 - `gnome-terminal` — terminal used by launchers and overlays
 - `kitty` — canonical terminal for the i3/tmux workflow
 - `nemo` — GUI file manager
