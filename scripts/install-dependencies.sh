@@ -39,6 +39,7 @@ APT_PACKAGES=(
   dex
   flameshot
   network-manager
+  bluez
   gnome-terminal
   nemo
   zathura

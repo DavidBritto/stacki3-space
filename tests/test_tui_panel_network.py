@@ -25,6 +25,12 @@ class TuiPanelNetworkTest(unittest.TestCase):
         self.assertIn("nmtui-connect", self.text)
         self.assertIn("exec nmtui connect", self.text)
 
+    def test_bluetooth_panel_opens_fzf_manager(self):
+        self.assertIn("bluetooth-tui)", self.text)
+        self.assertIn("title=\"TUI: bluetooth\"", self.text)
+        self.assertIn("bluetooth_tui.sh", self.text)
+        self.assertIn("stack-bluetooth-panel", self.text)
+
     def test_panels_run_in_bash_without_profile_startup(self):
         self.assertIn("bash --noprofile --norc -c", self.text)
 

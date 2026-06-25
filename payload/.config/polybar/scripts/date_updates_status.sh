@@ -31,8 +31,14 @@ update_count() {
 
 time_label="$(date '+%H:%M · %d-%m-%Y')"
 count="$(update_count)"
+battery_label="$(
+  __STACKI3_SPACE_HOME__/.config/polybar/scripts/battery_status.sh 2>/dev/null || true
+)"
 
 printf '%%{A1:%s:}%s%%{A}' "$calendar_cmd" "$time_label"
+if [ -n "$battery_label" ]; then
+  printf ' | %s' "$battery_label"
+fi
 if [ "${count:-0}" != "0" ]; then
   printf ' %%{F#7c5cff}%%{A1:%s:}↻%%{A}%%{F-}' "$updates_cmd"
 fi

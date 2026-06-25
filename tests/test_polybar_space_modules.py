@@ -13,11 +13,12 @@ class PolybarSpaceModulesTest(unittest.TestCase):
         self.text = POLYBAR.read_text()
 
     def test_bar_has_quiet_status_modules_without_network_or_music_noise(self):
-        self.assertIn("modules-right = ram cpu volume power", self.text)
+        self.assertIn("modules-right = ram cpu bluetooth volume power", self.text)
         self.assertIn("modules-center = date", self.text)
         self.assertNotIn("[module/music]", self.text)
         self.assertNotIn("music_status.sh", self.text)
         self.assertIn("[module/date]", self.text)
+        self.assertIn("[module/bluetooth]", self.text)
         self.assertNotIn("[module/updates]", self.text)
         self.assertNotIn("[module/net]", self.text)
         self.assertNotIn("network_status.sh", self.text)
@@ -40,6 +41,11 @@ class PolybarSpaceModulesTest(unittest.TestCase):
         self.assertIn("printf '\\n'", script)
         self.assertIn("↻", script)
         self.assertNotIn("UPD %s |", script)
+
+    def test_date_module_embeds_battery_status_when_present(self):
+        script = DATE_UPDATES.read_text()
+        self.assertIn("__STACKI3_SPACE_HOME__/.config/polybar/scripts/battery_status.sh", script)
+        self.assertIn('if [ -n "$battery_label" ]; then', script)
 
     def test_volume_slider_reads_generated_theme_colors(self):
         script = VOLUME_STATUS.read_text()
