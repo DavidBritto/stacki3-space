@@ -354,8 +354,8 @@ def panel_menu_entries():
         (action_label('system', 'Logs · Lazyjournal'), 'lazyjournal'),
         (action_label('project', 'Git · Lazygit'), 'lazygit'),
         (action_label('audio', 'Audio · Mixer'), 'audio-mixer'),
-        (action_label('network', 'Network · Connect'), 'network-connect'),
-        (action_label('network', 'Network · Advanced'), 'network-tui'),
+        (action_label('network', 'Network · WiFi'), 'network-tui'),
+        (action_label('network', 'Network · Nmtui'), 'network-nmtui'),
         (action_label('clipboard', 'Clipboard · History'), 'clipboard-view'),
         (action_label('notes', 'Notes · Quick notes'), 'quick-notes'),
     ]
@@ -479,10 +479,10 @@ def menu_network():
     state = 'enabled' if wifi_enabled() else 'disabled'
     choice = rofi_select('Network', [
         f'wifi: {state}',
-        'connect to another network',
-        'advanced nmtui',
+        'gestor WiFi (friendly)',
         'show active connections',
         'rescan wifi',
+        'nmtui (avanzado)',
     ], allow_back=True)
     if choice == '__back__':
         return menu_palette()
@@ -492,9 +492,7 @@ def menu_network():
         new = 'off' if wifi_enabled() else 'on'
         run(['nmcli', 'radio', 'wifi', new])
         notify(f'Wi-Fi {"activado" if new == "on" else "desactivado"}', title='network', app='system')
-    elif choice == 'connect to another network':
-        run([str(HOME / '.local/bin/tui-panel'), 'network-connect'])
-    elif choice == 'advanced nmtui':
+    elif choice == 'gestor WiFi (friendly)':
         run([str(HOME / '.local/bin/tui-panel'), 'network-tui'])
     elif choice == 'show active connections':
         active = check_output(['nmcli', '-t', '-f', 'NAME,TYPE,DEVICE', 'connection', 'show', '--active']).strip()
@@ -502,6 +500,8 @@ def menu_network():
     elif choice == 'rescan wifi':
         run(['nmcli', 'device', 'wifi', 'rescan'])
         notify('Escaneo Wi-Fi lanzado', title='network', app='system')
+    elif choice == 'nmtui (avanzado)':
+        run([str(HOME / '.local/bin/tui-panel'), 'network-nmtui'])
 
 
 def menu_mounts():

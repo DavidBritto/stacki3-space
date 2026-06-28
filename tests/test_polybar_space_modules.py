@@ -13,12 +13,14 @@ class PolybarSpaceModulesTest(unittest.TestCase):
         self.text = POLYBAR.read_text()
 
     def test_bar_has_quiet_status_modules_without_network_or_music_noise(self):
-        self.assertIn("modules-right = ram cpu bluetooth volume power", self.text)
+        self.assertIn("modules-right = ram cpu network bluetooth volume power", self.text)
         self.assertIn("modules-center = date", self.text)
         self.assertNotIn("[module/music]", self.text)
         self.assertNotIn("music_status.sh", self.text)
         self.assertIn("[module/date]", self.text)
         self.assertIn("[module/bluetooth]", self.text)
+        self.assertIn("[module/network]", self.text)
+        self.assertIn("wifi_status.sh", self.text)
         self.assertNotIn("[module/updates]", self.text)
         self.assertNotIn("[module/net]", self.text)
         self.assertNotIn("network_status.sh", self.text)

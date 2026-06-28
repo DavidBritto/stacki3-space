@@ -38,17 +38,17 @@ case "$panel" in
     ;;
   network-tui)
     title="TUI: network"
-    panel_width=760
-    panel_height=520
+    panel_width=780
+    panel_height=560
+    window_class="stack-network-panel"
+    cmd="export STACK_NO_AUTO_TMUX=1; exec $HOME/.config/polybar/scripts/network_tui.sh"
+    ;;
+  network-nmtui)
+    title="TUI: nmtui"
+    panel_width=680
+    panel_height=440
     window_class="stack-network-panel"
     cmd="export STACK_NO_AUTO_TMUX=1 TERM=xterm-256color; export NEWT_COLORS='root=white,black;border=blue,black;window=white,black;shadow=black,black;title=magenta,black;button=black,blue;actbutton=black,magenta;entry=white,black;label=white,black;compactbutton=white,black;checkbox=blue,black;actcheckbox=black,blue'; exec nmtui"
-    ;;
-  network-connect)
-    title="TUI: connect network"
-    panel_width=760
-    panel_height=520
-    window_class="stack-network-panel"
-    cmd="export STACK_NO_AUTO_TMUX=1 TERM=xterm-256color; export NEWT_COLORS='root=white,black;border=blue,black;window=white,black;shadow=black,black;title=magenta,black;button=black,blue;actbutton=black,magenta;entry=white,black;label=white,black;compactbutton=white,black;checkbox=blue,black;actcheckbox=black,blue'; if command -v nmtui-connect >/dev/null 2>&1; then exec nmtui-connect; else exec nmtui connect; fi"
     ;;
   bluetooth-tui)
     title="TUI: bluetooth"
@@ -80,32 +80,7 @@ while stack:
 print("yes" if found else "no")' "$title" | grep -qx yes; then
   exec i3-msg "[title=\"$title\"] scratchpad show, resize set $panel_width $panel_height, move position center, focus" >/dev/null 2>&1
 else
-  kitty --class "$window_class" --title "$title" \
-    --override scrollback_lines=0 \
-    --override remember_window_size=no \
-    --override window_padding_width=4 \
-    --override background=#000000 \
-    --override foreground=#b8cdfe \
-    --override cursor=#67c9e4 \
-    --override cursor_text_color=#000000 \
-    --override selection_background=#4961da \
-    --override selection_foreground=#ffffff \
-    --override color0=#000000 \
-    --override color1=#7c5cff \
-    --override color2=#67c9e4 \
-    --override color3=#f0c674 \
-    --override color4=#4961da \
-    --override color5=#7c5cff \
-    --override color6=#67c9e4 \
-    --override color7=#b8cdfe \
-    --override color8=#444b6f \
-    --override color9=#9d7cff \
-    --override color10=#8be9fd \
-    --override color11=#f0c674 \
-    --override color12=#5b72ff \
-    --override color13=#9d7cff \
-    --override color14=#67c9e4 \
-    --override color15=#ffffff \
+  "$HOME/.local/bin/stack-terminal" panel --class "$window_class" --title "$title" \
     --working-directory "$HOME" \
     bash --noprofile --norc -c "export STACK_NO_AUTO_TMUX=1; $cmd; rc=\$?; if [ \$rc -ne 0 ]; then printf '\n[panel error] exit=%s\n' \"\$rc\"; printf 'Presiona una tecla para cerrar...'; IFS= read -rsn1 _; fi; exit \$rc">/tmp/stacki3-space-tui-panel.log 2>&1 &
   sleep 0.4

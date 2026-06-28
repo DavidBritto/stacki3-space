@@ -9,7 +9,8 @@ Overlays disponibles:
 - btop           : monitor del sistema (usa btop; si falta, cae a htop/top)
 - lazygit        : Git TUI
 - audio-mixer    : alsamixer
-- network-tui    : nmtui
+- network-tui    : gestor WiFi con fzf
+- network-nmtui  : nmtui avanzado
 - clipboard-view : historial del portapapeles en less
 - quick-notes    : notas rápidas locales
 

@@ -1,0 +1,26 @@
+{
+  "name": "stackd-theme",
+  "displayName": "Stackd Dark Theme",
+  "description": "Custom dark theme based on Vira Montana palette — sin pagar",
+  "version": "0.1.0",
+  "publisher": "davidops",
+  "license": "MIT",
+  "engines": {
+    "vscode": "^1.80.0"
+  },
+  "categories": ["Themes"],
+  "contributes": {
+    "themes": [
+      {
+        "label": "Stackd Montana",
+        "uiTheme": "vs-dark",
+        "path": "./themes/stackd-montana-color-theme.json"
+      },
+      {
+        "label": "Stackd Montana High Contrast",
+        "uiTheme": "vs-dark",
+        "path": "./themes/stackd-montana-hc-color-theme.json"
+      }
+    ]
+  }
+}
