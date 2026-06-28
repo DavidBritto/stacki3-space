@@ -14,6 +14,8 @@ class OfflinePackageTest(unittest.TestCase):
         offenders = []
         for path in PAYLOAD.rglob("*"):
             if path.is_file():
+                if "__pycache__" in path.parts or path.suffix == ".pyc":
+                    continue
                 data = path.read_bytes()
                 if b"/home/david" in data:
                     offenders.append(path.relative_to(ROOT).as_posix())

@@ -20,6 +20,18 @@ class StackThemeCatalogTest(unittest.TestCase):
         self.assertEqual("#b8ff3d", colors["success"])
         self.assertIn("#a855ff", theme["terminal"]["palette"])
 
+    def test_montana_theme_exists_with_vira_dark_palette(self):
+        theme = json.loads((THEMES / "montana.json").read_text())
+        colors = theme["colors"]
+
+        self.assertEqual("montana", theme["name"])
+        self.assertEqual("Montana / Vira Dark", theme["display"])
+        self.assertEqual("#130F15", colors["bg"])
+        self.assertEqual("#80CBC4", colors["accent"])
+        self.assertEqual("#89DDFF", colors["accent2"])
+        self.assertEqual("montana", theme["opencode"]["theme"])
+        self.assertIn("icon_font", theme)
+
     def test_readme_lists_space_lime_as_official_theme(self):
         text = README.read_text()
 

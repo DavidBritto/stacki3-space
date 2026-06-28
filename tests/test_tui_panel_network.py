@@ -10,20 +10,21 @@ class TuiPanelNetworkTest(unittest.TestCase):
         self.text = TUI_PANEL.read_text()
 
     def test_network_panel_has_compact_geometry(self):
-        self.assertIn("panel_width=760", self.text)
-        self.assertIn("panel_height=520", self.text)
+        self.assertIn("panel_width=780", self.text)
+        self.assertIn("panel_height=560", self.text)
         self.assertIn("resize set $panel_width $panel_height", self.text)
 
-    def test_network_panel_disables_auto_tmux_and_sets_newt_colors(self):
-        self.assertIn("STACK_NO_AUTO_TMUX=1", self.text)
+    def test_network_panel_opens_fzf_wifi_manager(self):
+        self.assertIn("network-tui)", self.text)
+        self.assertIn("title=\"TUI: network\"", self.text)
+        self.assertIn("network_tui.sh", self.text)
+        self.assertIn("stack-network-panel", self.text)
+
+    def test_network_nmtui_panel_keeps_legacy_flow(self):
+        self.assertIn("network-nmtui)", self.text)
+        self.assertIn("title=\"TUI: nmtui\"", self.text)
         self.assertIn("NEWT_COLORS", self.text)
         self.assertIn("exec nmtui", self.text)
-
-    def test_network_connect_panel_opens_nmtui_connect_flow(self):
-        self.assertIn("network-connect)", self.text)
-        self.assertIn("title=\"TUI: connect network\"", self.text)
-        self.assertIn("nmtui-connect", self.text)
-        self.assertIn("exec nmtui connect", self.text)
 
     def test_bluetooth_panel_opens_fzf_manager(self):
         self.assertIn("bluetooth-tui)", self.text)
