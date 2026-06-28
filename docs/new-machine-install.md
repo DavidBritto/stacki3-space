@@ -135,5 +135,8 @@ Restore secrets manually. See `docs/migration-manifest.md`.
 - `mod+p` opens SPACE search.
 - `space doctor` passes or reports only known optional tools.
 - `stack-theme apply deep-space` works.
+- `stack-theme list` shows `montana` and the other shipped themes.
+- `mod+p` → `system` → `themes` applies a theme without editing files by hand.
+- Optional editor theme: `bash scripts/install-stackd-theme.sh` then pick **Stackd Montana** in Cursor/Kiro.
 - `lazyjournal` opens from the terminal or from `space menu panels`.
 - SSH to GitHub works.

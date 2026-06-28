@@ -34,12 +34,18 @@ for path in \
   .config/i3/config \
   .config/polybar/config.ini \
   .config/polybar/launch.sh \
+  .config/polybar/scripts/wifi_status.sh \
+  .config/polybar/scripts/network_tui.sh \
   .config/dunst/dunstrc \
   .config/picom/picom.conf \
   .config/rofi/config.rasi \
+  .config/kitty/kitty.conf \
   .config/stack-theme/current.json \
+  .config/stack-theme/themes/montana.json \
   .local/bin/space \
   .local/bin/stack-theme \
+  .local/bin/stack-terminal \
+  .local/bin/tui-panel \
   .local/bin/deskmenu \
   .tmux.conf \
   .zshrc; do
