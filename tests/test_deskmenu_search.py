@@ -37,9 +37,17 @@ class DeskmenuSearchTest(unittest.TestCase):
 
     def test_catalog_action_for_theme_apply_runs_stack_theme(self):
         actions = {a["label"]: a for a in mod.static_search_actions()}
-        self.assertEqual(actions["󰏘 theme · apply deep-space"]["command"][-2:], ["apply", "deep-space"])
-        self.assertTrue(actions["󰏘 theme · apply deep-space"]["command"][0].endswith("stack-theme"))
-        self.assertEqual(actions["󰏘 theme · apply space-lime"]["command"][-2:], ["apply", "space-lime"])
+        for name, _display in mod.iter_stack_themes():
+            label = mod.category_label('theme', f'apply {name}')
+            self.assertIn(label, actions, msg=f'missing search action for theme {name}')
+            self.assertEqual(actions[label]["command"][-2:], ["apply", name])
+            self.assertTrue(actions[label]["command"][0].endswith("stack-theme"))
+
+    def test_system_menu_exposes_theme_submenu(self):
+        source = DESKMENU.read_text()
+        self.assertIn("category_label('theme', 'themes')", source)
+        self.assertIn("def menu_themes", source)
+        self.assertIn("theme_apply_actions", source)
 
     def test_back_copy_is_minimal_and_vim_like(self):
         self.assertEqual(mod.BACK_LABEL, "← volver")

@@ -36,6 +36,7 @@ class StackThemeCatalogTest(unittest.TestCase):
         text = README.read_text()
 
         self.assertIn("stack-theme apply space-lime", text)
+        self.assertIn("stack-theme apply montana", text)
         self.assertIn("full dark con acentos cian/lima", text)
 
 
