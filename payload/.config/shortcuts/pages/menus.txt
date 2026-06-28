@@ -5,6 +5,7 @@ mod+p
 - abre la palette global
 - categorías: projects, windows, workspaces, panels, audio, network,
   mounts, clipboard, system, help
+- system → themes lista todos los temas de stack-theme (deep-space, montana…)
 
 mod+'
 - switcher de ventanas

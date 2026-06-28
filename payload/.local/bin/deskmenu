@@ -55,6 +55,35 @@ def action_label(category, label):
     return f'{glyph} {label}'
 
 
+THEMES_DIR = HOME / '.config/stack-theme/themes'
+STACK_THEME = HOME / '.local/bin/stack-theme'
+
+
+def iter_stack_themes():
+    if not THEMES_DIR.is_dir():
+        return []
+    themes = []
+    for path in sorted(THEMES_DIR.glob('*.json')):
+        try:
+            data = json.loads(path.read_text())
+        except Exception:
+            continue
+        name = data.get('name', path.stem)
+        display = data.get('display', name)
+        themes.append((name, display))
+    return themes
+
+
+def theme_apply_actions():
+    return [
+        {
+            'label': category_label('theme', f'apply {name}'),
+            'command': [str(STACK_THEME), 'apply', name],
+        }
+        for name, _display in iter_stack_themes()
+    ]
+
+
 def run(cmd, **kwargs):
     return subprocess.run(cmd, text=True, **kwargs)
 
@@ -226,9 +255,7 @@ def static_search_actions():
         {'label': category_label('bar', 'restart polybar'), 'command': [str(HOME / '.config/polybar/launch.sh')]},
         {'label': category_label('notify', 'restart dunst'), 'command': ['sh', '-lc', 'pkill dunst || true; nohup dunst >/tmp/dunst.log 2>&1 &']},
         {'label': category_label('compositor', 'restart picom'), 'command': ['sh', '-lc', f'pkill picom || true; nohup picom --config {HOME}/.config/picom/picom.conf >/tmp/picom.log 2>&1 &']},
-        {'label': category_label('theme', 'apply deep-space'), 'command': [str(HOME / '.local/bin/stack-theme'), 'apply', 'deep-space']},
-        {'label': category_label('theme', 'apply space-purple'), 'command': [str(HOME / '.local/bin/stack-theme'), 'apply', 'space-purple']},
-        {'label': category_label('theme', 'apply space-lime'), 'command': [str(HOME / '.local/bin/stack-theme'), 'apply', 'space-lime']},
+        *theme_apply_actions(),
         {'label': category_label('wallpaper', 'next'), 'command': [str(HOME / '.local/bin/stack-wall'), 'next']},
         {'label': category_label('wallpaper', 'random'), 'command': [str(HOME / '.local/bin/stack-wall'), 'random']},
         *[
@@ -560,12 +587,29 @@ def menu_clipboard():
         notify('Entrada copiada al portapapeles', title='clipboard', app='system')
 
 
+def menu_themes():
+    entries = {
+        category_label('theme', display): name
+        for name, display in iter_stack_themes()
+    }
+    if not entries:
+        notify('No hay temas en stack-theme/themes', title='theme', app='system')
+        return menu_system()
+    choice = rofi_select('Themes', list(entries), allow_back=True)
+    if choice == '__back__':
+        return menu_system()
+    name = entries.get(choice)
+    if name:
+        run([str(STACK_THEME), 'apply', name])
+
+
 def menu_system():
     entries = {
         category_label('system', 'reload i3'): 'reload i3',
         category_label('bar', 'restart polybar'): 'restart polybar',
         category_label('notify', 'restart dunst'): 'restart dunst',
         category_label('compositor', 'restart picom'): 'restart picom',
+        category_label('theme', 'themes'): 'themes',
         category_label('system', 'lock screen'): 'lock screen',
         category_label('system', 'screenshot'): 'screenshot',
         category_label('system', 'screenshot delayed'): 'screenshot delayed',
@@ -588,6 +632,8 @@ def menu_system():
     elif choice == 'restart picom':
         subprocess.Popen(['bash', '-lc', f'pkill picom || true; nohup picom --config {HOME}/.config/picom/picom.conf >/tmp/picom.log 2>&1 &'])
         notify('Picom reiniciado', title='system', app='system')
+    elif choice == 'themes':
+        menu_themes()
     elif choice == 'lock screen':
         subprocess.Popen([str(HOME / '.config/i3/lock.sh')])
     elif choice == 'screenshot':
