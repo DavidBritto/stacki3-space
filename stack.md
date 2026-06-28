@@ -102,7 +102,7 @@ Commands:
 - `stack-theme apply space-lime` → apply the full-dark cyan/lime palette
 - `stack-theme restore-last` → restore files from the latest backup
 
-The switcher writes generated color files and updates i3, Polybar, Rofi, Dunst, Picom, tmux, Kitty, Zsh/Oh My Posh, GTK/Nemo and terminal/editor theme files shipped by the stack. Nemo stays on `CrewDragon-Y` in all shipped themes by preference. The selectable theme names are `deep-space`, `space-purple` and `space-lime`; `oceano` survives only in legacy component path names such as `rofi/oceano.rasi` and `polkit-oceano`.
+The switcher writes generated color files and updates i3, Polybar, Rofi, Dunst, Picom, tmux, Kitty, Zsh/Oh My Posh, GTK/Nemo and terminal/editor theme files shipped by the stack. Nemo stays on `CrewDragon-Y` in all shipped themes by preference. The selectable theme names are `deep-space`, `space-purple`, `space-lime` and `montana`; `oceano` survives only in legacy component path names such as `rofi/oceano.rasi` and `polkit-oceano`.
 
 ### SPACE command surface
 `~/.local/bin/space` is the main Omarchy-like command surface for STACKI3-Space. It wraps the existing helpers instead of replacing stable pieces.
@@ -287,6 +287,7 @@ Operational notes:
 - `payload/.config/stack-theme/themes/deep-space.json`
 - `payload/.config/stack-theme/themes/space-purple.json`
 - `payload/.config/stack-theme/themes/space-lime.json`
+- `payload/.config/stack-theme/themes/montana.json`
 - `payload/.config/dunst/dunstrc`
 - `payload/.config/picom/picom.conf`
 - `payload/.config/rofi/config.rasi`
