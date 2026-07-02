@@ -1,0 +1,55 @@
+{
+  "name": "ocean",
+  "display": "Ocean / Vira Ocean Dark Contrast",
+  "variant": "dark",
+  "colors": {
+    "bg": "#090B10",
+    "surface": "#0F111A",
+    "elevated": "#1A1C25",
+    "input": "#0F111A",
+    "accent": "#80CBC4",
+    "accent_hover": "#A0E6DE",
+    "accent2": "#89DDFF",
+    "cyan": "#82AAFF",
+    "text": "#CED1E3",
+    "text_bright": "#CED1E3",
+    "dim": "#464B5D",
+    "white": "#ffffff",
+    "warning": "#FFCB6B",
+    "error": "#f07178",
+    "success": "#C3E88D"
+  },
+  "terminal": {
+    "palette": [
+      "#090B10",
+      "#f07178",
+      "#C3E88D",
+      "#FFCB6B",
+      "#82AAFF",
+      "#C792EA",
+      "#89DDFF",
+      "#CED1E3",
+      "#464B5D",
+      "#f07178",
+      "#C3E88D",
+      "#FFCB6B",
+      "#82AAFF",
+      "#C792EA",
+      "#89DDFF",
+      "#ffffff"
+    ]
+  },
+  "gtk": {
+    "theme": "CrewDragon-Y",
+    "icon_theme": "FairyWren_Light",
+    "cursor_theme": "Bibata-Original-Classic"
+  },
+  "font": "Berkeley Mono",
+  "icon_font": "MesloLGS Nerd Font Mono",
+  "zsh": {
+    "omp_config": "/home/david/.config/oh-my-posh/themes/ocean.omp.json"
+  },
+  "opencode": {
+    "theme": "ocean"
+  }
+}

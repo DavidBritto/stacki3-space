@@ -80,24 +80,41 @@ def extract_colors(path: Path):
     }
 
 
-def write_generated(colors):
+def rgba(hex_color, alpha='100%'):
+    h = hex_color.lstrip('#')
+    r, g, b = int(h[0:2], 16), int(h[2:4], 16), int(h[4:6], 16)
+    return f'rgba({r}, {g}, {b}, {alpha})'
+
+
+def write_rofi_colors():
+    """Escribe generated-colors.rasi usando SOLO los colores del theme activo,
+    sin depender del wallpaper."""
+    theme_file = STATE_DIR / 'current.json'
+    if theme_file.exists():
+        theme = json.loads(theme_file.read_text()).get('colors', {})
+    else:
+        theme = {}
+    ROFI_FILE.write_text(
+        '* {\n'
+        f'    bg:             {rgba(theme.get("bg", DEFAULT_BG), "98%")};\n'
+        f'    bg-selected:    {rgba(theme.get("elevated", "#1a1c25"))};\n'
+        f'    bg-input:       {rgba(theme.get("input", theme.get("surface", DEFAULT_SURFACE)))};\n'
+        f'    fg:             {rgba(theme.get("text", DEFAULT_TEXT))};\n'
+        f'    fg-muted:       {rgba(theme.get("dim", "#464b5d"), "92%")};\n'
+        f'    accent:         {rgba(theme.get("accent", "#4961da"))};\n'
+        f'    accent-strong:  {rgba(theme.get("accent_hover", theme.get("cyan", "#5b72ff")))};\n'
+        f'    border-col:     {rgba(theme.get("accent2", theme.get("cyan", "#67c9e4")))};\n'
+        '}\n'
+    )
+
+
+def write_polybar_colors(colors):
     POLYBAR_FILE.write_text(
         '[generated]\n'
         f'primary = {colors["primary"]}\n'
         f'secondary = {colors["secondary"]}\n'
         f'alert = {colors["alert"]}\n'
         f'accent_soft = {colors["accent_soft"]}\n'
-    )
-    def rgba(hex_color, alpha='100%'):
-        h = hex_color.lstrip('#')
-        r, g, b = int(h[0:2], 16), int(h[2:4], 16), int(h[4:6], 16)
-        return f'rgba({r}, {g}, {b}, {alpha})'
-    ROFI_FILE.write_text(
-        '* {\n'
-        f'    accent:         {rgba(colors["accent_soft"])};\n'
-        f'    accent-strong:  {rgba(colors["secondary"])};\n'
-        f'    border-col:     {rgba(colors["primary"])};\n'
-        '}\n'
     )
 
 
@@ -106,7 +123,8 @@ def apply_wall(path: Path, reload_ui=True):
     env.setdefault('DISPLAY', ':0')
     subprocess.run(['feh', '--bg-fill', str(path)], check=False, env=env)
     colors = extract_colors(path)
-    write_generated(colors)
+    write_polybar_colors(colors)
+    write_rofi_colors()
     save_state(path)
     if reload_ui:
         subprocess.run([str(HOME / '.config' / 'polybar' / 'launch.sh')], check=False)

@@ -100,9 +100,10 @@ Commands:
 - `stack-theme apply deep-space` → apply the current black deep-space theme
 - `stack-theme apply space-purple` → apply the previous purple space palette
 - `stack-theme apply space-lime` → apply the full-dark cyan/lime palette
+- `stack-theme apply ocean` → apply the ocean dark contrast theme
 - `stack-theme restore-last` → restore files from the latest backup
 
-The switcher writes generated color files and updates i3, Polybar, Rofi, Dunst, Picom, tmux, Kitty, Zsh/Oh My Posh, GTK/Nemo and terminal/editor theme files shipped by the stack. Nemo stays on `CrewDragon-Y` in all shipped themes by preference. The selectable theme names are `deep-space`, `space-purple`, `space-lime` and `montana`; `oceano` survives only in legacy component path names such as `rofi/oceano.rasi` and `polkit-oceano`.
+The switcher writes generated color files and updates i3, Polybar, Rofi, Dunst, Picom, tmux, Kitty, Zsh/Oh My Posh, GTK/Nemo and terminal/editor theme files shipped by the stack. Nemo stays on `CrewDragon-Y` in all shipped themes by preference. The selectable theme names are `deep-space`, `space-purple`, `space-lime`, `montana` and `ocean`; `oceano` survives only in legacy component path names such as `rofi/oceano.rasi` and `polkit-oceano`.
 
 ### SPACE command surface
 `~/.local/bin/space` is the main Omarchy-like command surface for STACKI3-Space. It wraps the existing helpers instead of replacing stable pieces.
@@ -306,6 +307,8 @@ Operational notes:
 - `payload/.local/bin/tmux-copy`
 - `payload/.local/bin/tmux-net-health`
 - `payload/.local/bin/tmux-net-debug`
+- `payload/.local/bin/stack-wall`
+- `payload/.config/stack-theme/themes/ocean.json`
 - `payload/.tmux.conf`
 - `install.sh`
 
